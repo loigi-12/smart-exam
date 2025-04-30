@@ -1,0 +1,5 @@
+section,id,type,text,options,answer,name,instructions
+meta,,,,,,Final Exam,Read all questions carefully.
+question,q1,multiple-choice,What is 2 + 2?,1|2|3|4,D,,
+question,q2,identification,Capital of France?,,Paris,,
+question,q3,essay,Explain the significance of the Treaty of Versailles.,,,,

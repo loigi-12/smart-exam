@@ -1,0 +1,26 @@
+{
+  "name": "Final Exam",
+  "dueDate": "2025-04-15T09:00:00Z",
+  "instructions": "Read all questions carefully.",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple-choice",
+      "text": "What is 2 + 2?",
+      "options": ["1", "2", "3", "4"],
+      "answer": "D"
+    },
+    {
+      "id": "q2",
+      "type": "identification",
+      "text": "Capital of France?",
+      "answer": "Paris"
+    },
+    {
+      "id": "q3",
+      "type": "essay",
+      "text": "Explain the significance of the Treaty of Versailles in 1919."
+    }
+  ],
+  "timeLimit": 120
+}
