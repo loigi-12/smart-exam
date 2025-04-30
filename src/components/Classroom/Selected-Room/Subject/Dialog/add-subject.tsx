@@ -185,7 +185,7 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="w-full max-w-7xl h-full overflow-auto">
+      <DialogContent className="w-full max-w-7xl">
         <DialogHeader>
           <DialogTitle>Add Info</DialogTitle>
           <DialogDescription>Add info in your department</DialogDescription>
