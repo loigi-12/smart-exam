@@ -45,7 +45,7 @@ export default function SubjectTab({ classroom }: SubjectTabProps) {
   }, [classroom.id]);
 
   const filteredSubjects = classroomSubjects.filter((subject) =>
-    subject.name.toLowerCase().includes(searchQuery.toLowerCase())
+    subject?.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
