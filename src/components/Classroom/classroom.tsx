@@ -14,10 +14,7 @@ export default function ClassroomPage() {
   const [userClassrooms, setUserClassrooms] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const handleCreateClassroom = async (
-    _classroomName: string,
-    _department: string
-  ) => {};
+  const handleCreateClassroom = async (_classroomName: string, _department: string) => {};
 
   useEffect(() => {
     const unsubscribe = getClassrooms(setClassrooms);
@@ -26,18 +23,13 @@ export default function ClassroomPage() {
 
   useEffect(() => {
     if (user?.documentId) {
-      const unsubscribe = FetchUserClassrooms(
-        user.documentId,
-        setUserClassrooms
-      );
+      const unsubscribe = FetchUserClassrooms(user.documentId, setUserClassrooms);
       return () => unsubscribe();
     }
   }, [user]);
 
   const filteredClassrooms = classrooms.filter((room) => {
-    const matchesSearch = room.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+    const matchesSearch = room.name.toLowerCase().includes(searchQuery.toLowerCase());
     if (user?.role === "student") {
       return matchesSearch && userClassrooms.includes(room.id);
     } else if (user?.role === "professor") {
@@ -65,15 +57,13 @@ export default function ClassroomPage() {
             ) : (
               <CreateClassroom onCreate={handleCreateClassroom} />
             )} */}
-            {user?.role === "admin" && (
-              <CreateClassroom onCreate={handleCreateClassroom} />
-            )}
+            {user?.role === "admin" && <CreateClassroom onCreate={handleCreateClassroom} />}
           </div>
         </div>
 
         <div className="mt-6">
           <div className="mb-2">
-            <h1 className="font-bold">Department</h1>
+            <h1 className="font-bold">Class</h1>
           </div>
           <div className="flex flex-col sm:flex-row w-full gap-2 items-center">
             {filteredClassrooms.length === 0 ? (

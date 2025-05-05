@@ -4,7 +4,7 @@ import {
   SquareUserRound,
   Notebook,
   BookOpen,
-  UserCircle
+  UserCircle,
 } from "lucide-react";
 
 export const getNavData = (role: string) => ({
@@ -25,7 +25,7 @@ export const getNavData = (role: string) => ({
         ]
       : []),
     ...(role !== "student" && role !== "professor"
-        ? [
+      ? [
           {
             title: "Subject",
             href: "/main/subject",
@@ -34,7 +34,7 @@ export const getNavData = (role: string) => ({
         ]
       : []),
     {
-      title: "Program Data",
+      title: "Classes",
       href: "/main/classroom",
       icon: SquareUserRound,
     },
@@ -55,13 +55,12 @@ export const getNavData = (role: string) => ({
             icon: SquareUserRound,
           },
         ]
-    : []),
+      : []),
 
-      {
-        title: "User Settings",
-        href: "/main/user-settings",
-        icon: UserCircle,
-      },
+    {
+      title: "User Settings",
+      href: "/main/user-settings",
+      icon: UserCircle,
+    },
   ],
-  
 });

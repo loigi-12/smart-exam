@@ -33,9 +33,7 @@ export default function SelectedSubjectInRoom() {
           return;
         }
 
-        const targetClassroomId = Array.isArray(classroomId)
-          ? classroomId[0]
-          : classroomId;
+        const targetClassroomId = Array.isArray(classroomId) ? classroomId[0] : classroomId;
 
         const classroomRef = ref(database, `classrooms/${targetClassroomId}`);
         const classroomSnapshot = await get(classroomRef);
@@ -95,11 +93,7 @@ export default function SelectedSubjectInRoom() {
             </Badge>
           </div> */}
           <div>
-            <Tabs
-              value={selectedTab}
-              onValueChange={setSelectedTab}
-              className="mb-5"
-            >
+            <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mb-5">
               <TabsList className="flex">
                 <TabsTrigger value="exam">Exam</TabsTrigger>
                 <TabsTrigger value="student">Student</TabsTrigger>
@@ -110,15 +104,9 @@ export default function SelectedSubjectInRoom() {
         </div>
 
         <div className="mt-6">
-          {selectedTab === "student" && (
-            <StudentTab subject={subject} classroom={classroom} />
-          )}
-          {selectedTab === "exam" && (
-            <ExamTab id={id} subject={subject} classroom={classroom} />
-          )}
-          {selectedTab === "grade" && (
-            <GradeTab subject={subject} classroom={classroom} />
-          )}
+          {selectedTab === "student" && <StudentTab subject={subject} classroom={classroom} />}
+          {selectedTab === "exam" && <ExamTab id={id} subject={subject} classroom={classroom} />}
+          {selectedTab === "grade" && <GradeTab subject={subject} classroom={classroom} />}
         </div>
       </Card>
     </div>

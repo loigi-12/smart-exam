@@ -36,9 +36,7 @@ export default function SubjectTab({ classroom }: SubjectTabProps) {
 
       const subjects = await Promise.all(subjectPromises);
       console.log("Subjects: ", subjects);
-      setClassroomSubjects(
-        subjects.filter((subject) => subject !== null) as any[]
-      );
+      setClassroomSubjects(subjects.filter((subject) => subject !== null) as any[]);
     }
   };
 
@@ -62,20 +60,17 @@ export default function SubjectTab({ classroom }: SubjectTabProps) {
           />
         </div>
         <div className="mb-5 ">
-          <AddSubject
-            classroom={classroom}
-            onSubjectsUpdated={fetchClassroomSubjects}
-          />
+          <AddSubject classroom={classroom} onSubjectsUpdated={fetchClassroomSubjects} />
         </div>
       </div>
 
       <div className="mt-6">
         <div className="mb-2">
-          <h1 className="font-bold">Year Level</h1>
+          <h1 className="font-bold">Course Subjects</h1>
         </div>
         <div className="flex flex-col sm:flex-row w-full gap-2 items-center">
           {filteredSubjects.length === 0 ? (
-            <p className="text-zinc-500">No Year Level found in this department</p>
+            <p className="text-zinc-500">No Subject found in this department</p>
           ) : (
             filteredSubjects.map((roomSubject) => (
               <Link

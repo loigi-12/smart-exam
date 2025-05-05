@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,16 +6,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  getExamQuestions,
-  getFeedback,
-} from "@/services/exam-view-services";
+import { feedbackExam, getExamQuestions, getFeedback } from "@/services/exam-view-services";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Classroom } from "@/types/classroom";
+import { Button } from "@/components/ui/button";
 
 interface ExamViewDialogProps {
   selectedExam: {
@@ -32,6 +30,10 @@ interface ExamViewDialogProps {
   classroom: Classroom | null;
 }
 
+interface ExamFeedback {
+  feedbackText: string;
+}
+
 export default function ExamViewDialog({
   selectedExam,
   isDialogOpen,
@@ -39,6 +41,7 @@ export default function ExamViewDialog({
 }: ExamViewDialogProps) {
   const [questions, setQuestions] = useState<any[]>([]);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [feedbackText, setFeedbackText] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -74,27 +77,20 @@ export default function ExamViewDialog({
   const renderQuestionContent = (question: any, index: number) => {
     const userAnswer = selectedExam?.answers?.[index]?.answer || "No answer";
     const aiFeedback = selectedExam?.answers?.[index]?.aiFeedback;
-  
+
     switch (question.type) {
       case "multiple-choice":
         return (
           <div>
-            <RadioGroup
-              value={userAnswer}
-              onValueChange={(value) => console.log(value)}
-            >
+            <RadioGroup value={userAnswer} onValueChange={(value) => console.log(value)}>
               {question.options?.map((option: string, idx: number) => (
-                <Card
-                  key={idx}
-                  className="flex items-center justify-between space-x-2 mt-2 p-4"
-                >
+                <Card key={idx} className="flex items-center justify-between space-x-2 mt-2 p-4">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value={option} />
                     <Label>{option}</Label>
                   </div>
-  
-                  {String(option).toLowerCase() ===
-                    String(question.answer).toLowerCase() && (
+
+                  {String(option).toLowerCase() === String(question.answer).toLowerCase() && (
                     <div className="text-zinc-500 text-xs">Correct answer</div>
                   )}
                 </Card>
@@ -106,16 +102,12 @@ export default function ExamViewDialog({
         return (
           <div className="mt-2 relative">
             <div className="flex items-center border rounded-xl px-3 py-2">
-              <span className="text-black dark:text-white flex-grow">
-                {userAnswer}
-              </span>
-              <span className="text-zinc-500 text-xs">
-                Correct answer: {question.answer}
-              </span>
+              <span className="text-black dark:text-white flex-grow">{userAnswer}</span>
+              <span className="text-zinc-500 text-xs">Correct answer: {question.answer}</span>
             </div>
           </div>
         );
-  
+
       case "essay":
         return (
           <div className="mt-2">
@@ -124,21 +116,36 @@ export default function ExamViewDialog({
               <div className="mt-4 p-4  rounded-md">
                 <Label className="text-lg font-semibold">AI Feedback:</Label>
                 <div className="mt-2">
-                <Badge>
-                <p>Rating: {aiFeedback?.rating || "Not available"} out of {question.essayScore}</p>
-                </Badge>
+                  <Badge>
+                    <p>
+                      Rating: {aiFeedback?.rating || "Not available"} out of {question.essayScore}
+                    </p>
+                  </Badge>
                   <p>Comment: {aiFeedback?.comment || "No comment available"}</p>
                 </div>
               </div>
             )}
           </div>
         );
-  
+
       default:
         return <p>Unknown question type</p>;
     }
   };
-  
+
+  const feedbackRef = useRef(null);
+  // const handleSubmitFeedback = ({value}: String) => {
+  //   // const feedback = feedbackRef.current?.feedbackText;
+
+  //   console.log("feedback", value);
+  //   // if ((selectedExam?.examId && selectedExam?.userExamId, feedback)) {
+  //   //   feedbackExam(selectedExam?.examId, selectedExam.userExamId, feedback);
+  //   // }
+  // };
+
+  const handleSubmitFeedback = () => {
+    console.log("feedback", feedbackRef.current);
+  };
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -154,11 +161,7 @@ export default function ExamViewDialog({
                 {selectedExam.score} / {selectedExam.totalQuestions}
               </Badge>
               {selectedExam?.percentage !== undefined && (
-                <Badge
-                  variant={
-                    selectedExam.percentage >= 60 ? "secondary" : "destructive"
-                  }
-                >
+                <Badge variant={selectedExam.percentage >= 60 ? "secondary" : "destructive"}>
                   {Math.round(selectedExam.percentage)}%
                 </Badge>
               )}
@@ -185,13 +188,29 @@ export default function ExamViewDialog({
           <p>No exam selected.</p>
         )}
 
-        {feedback && (
-          <div className="mt-4">
+        {feedback ? (
+          <div className="mt-6">
             <Label>Feedback:</Label>
             <Card className="mt-2 p-4">
               <p>{feedback}</p>
             </Card>
           </div>
+        ) : (
+          <>
+            <Label htmlFor="feedback" className="block mt-4">
+              Feedback
+            </Label>
+            <Textarea
+              id="feedback"
+              placeholder="Share your thoughts about the exam..."
+              className="mt-1"
+              ref={feedbackRef}
+              required
+            />
+            <Button className="" variant="outline" onClick={handleSubmitFeedback}>
+              Submit feedback
+            </Button>
+          </>
         )}
       </DialogContent>
     </Dialog>

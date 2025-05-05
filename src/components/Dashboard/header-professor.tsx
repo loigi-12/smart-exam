@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { useAuthStore } from "@/store/authStore";
 import {
   getClassroomsByProfessor,
@@ -20,20 +14,14 @@ export default function HeaderProfessor() {
 
   useEffect(() => {
     if (user?.documentId) {
-      const unsubscribeClassrooms = getClassroomsByProfessor(
-        user.documentId,
-        (data) => {
-          setClassroomCount(data.classroomCount);
-          setStudentCount(data.studentCount);
-        }
-      );
+      const unsubscribeClassrooms = getClassroomsByProfessor(user.documentId, (data) => {
+        setClassroomCount(data.classroomCount);
+        setStudentCount(data.studentCount);
+      });
 
-      const unsubscribeExams = getExamsByProfessorSubjects(
-        user.documentId,
-        (count) => {
-          setExamCount(count);
-        }
-      );
+      const unsubscribeExams = getExamsByProfessorSubjects(user.documentId, (count) => {
+        setExamCount(count);
+      });
       return () => {
         unsubscribeClassrooms();
         unsubscribeExams();
@@ -45,7 +33,7 @@ export default function HeaderProfessor() {
     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
       <Card>
         <CardHeader>
-          <CardTitle>Total Classroom</CardTitle>
+          <CardTitle>Class handled</CardTitle>
           <CardDescription>Displays created classroom count</CardDescription>
         </CardHeader>
         <CardContent>
@@ -64,9 +52,7 @@ export default function HeaderProfessor() {
         </CardHeader>
         <CardContent>
           <div>
-            <h1 className="text-4xl font-bold text-[#182b5c] dark:text-[#ff914d]">
-              {examCount}
-            </h1>
+            <h1 className="text-4xl font-bold text-[#182b5c] dark:text-[#ff914d]">{examCount}</h1>
             <h1 className="text-sm text-zinc-500">Exam created</h1>
           </div>
         </CardContent>
@@ -74,18 +60,14 @@ export default function HeaderProfessor() {
       <Card>
         <CardHeader>
           <CardTitle>Total Student</CardTitle>
-          <CardDescription>
-            Displays joined student in classroom
-          </CardDescription>
+          <CardDescription>Displays joined student in classroom</CardDescription>
         </CardHeader>
         <CardContent>
           <div>
             <h1 className="text-4xl font-bold text-[#182b5c] dark:text-[#ff914d]">
               {studentCount}
             </h1>
-            <h1 className="text-sm text-zinc-500">
-              Joined student in your classroom
-            </h1>
+            <h1 className="text-sm text-zinc-500">Joined student in your classroom</h1>
           </div>
         </CardContent>
       </Card>
