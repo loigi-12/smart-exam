@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { feedbackExam, getExamQuestions, getFeedback } from "@/services/exam-view-services";
+import { getExamQuestions, getFeedback } from "@/services/exam-view-services";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -30,10 +30,6 @@ interface ExamViewDialogProps {
   classroom: Classroom | null;
 }
 
-interface ExamFeedback {
-  feedbackText: string;
-}
-
 export default function ExamViewDialog({
   selectedExam,
   isDialogOpen,
@@ -41,7 +37,6 @@ export default function ExamViewDialog({
 }: ExamViewDialogProps) {
   const [questions, setQuestions] = useState<any[]>([]);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [feedbackText, setFeedbackText] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchQuestions = async () => {
