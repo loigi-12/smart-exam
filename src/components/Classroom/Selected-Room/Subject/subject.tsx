@@ -8,6 +8,7 @@ import AddSubject from "./Dialog/add-subject";
 import { Link } from "react-router-dom";
 import { getUsers } from "@/services/user-services";
 import { useAuthStore } from "@/store/authStore";
+import { Subject } from "@/types/subject";
 
 interface Classroom {
   id: string;
@@ -22,6 +23,7 @@ interface SubjectTabProps {
 
 export default function SubjectTab({ classroom }: SubjectTabProps) {
   const [users, setUsers] = useState<any[]>([]);
+  const [userState, SetUserState] = useState<any>([]);
   const { user } = useAuthStore();
 
   const [classroomSubjects, setClassroomSubjects] = useState<any[]>([]);
@@ -40,7 +42,6 @@ export default function SubjectTab({ classroom }: SubjectTabProps) {
       });
 
       const subjects = await Promise.all(subjectPromises);
-      console.log("Subjects: ", subjects);
       setClassroomSubjects(subjects.filter((subject) => subject !== null) as any[]);
     }
   };
@@ -49,22 +50,24 @@ export default function SubjectTab({ classroom }: SubjectTabProps) {
     fetchClassroomSubjects();
   }, [classroom.id]);
 
-  const filteredSubjects = classroomSubjects.filter((subject) =>
-    subject?.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const _subjects = classroomSubjects.filter((subject) =>
-    subject?.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   useEffect(() => {
     const unsubscribe = getUsers(setUsers);
+    SetUserState(user);
     return () => unsubscribe();
   }, []);
 
-  console.log("user", user);
-  console.log("_subjects", _subjects);
-  console.log("searchQuery", searchQuery);
+  let filteredSubjects = [];
+
+  if (userState.role === "professor") {
+    const matchedUser = users.find((u) => u.id === userState.documentId);
+    const subjectIds = matchedUser?.subjects ?? [];
+
+    filteredSubjects = classroomSubjects.filter((subject) => subjectIds.includes(subject.id));
+  } else {
+    filteredSubjects = classroomSubjects.filter((subject) =>
+      subject?.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
 
   return (
     <div className="flex flex-col w-full">
