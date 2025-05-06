@@ -6,8 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import AddSubject from "./Dialog/add-subject";
 import { Link } from "react-router-dom";
-import { getUsers } from "@/services/user-services";
-import { useAuthStore } from "@/store/authStore";
 
 interface Classroom {
   id: string;
@@ -21,6 +19,7 @@ interface SubjectTabProps {
 }
 
 export default function SubjectTab({ classroom }: SubjectTabProps) {
+
   const [users, setUsers] = useState<any[]>([]);
   // const [userState, SetUserState] = useState<any>([]);
   const { user } = useAuthStore();
@@ -71,6 +70,7 @@ export default function SubjectTab({ classroom }: SubjectTabProps) {
       subject?.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }
+
 
   return (
     <div className="flex flex-col w-full">

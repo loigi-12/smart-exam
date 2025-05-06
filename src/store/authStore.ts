@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import {create} from 'zustand';
 
 interface AuthState {
   user: any;
@@ -9,8 +9,9 @@ interface AuthState {
 const localStorageKey = import.meta.env.VITE_LOCAL_STORAGE_KEY;
 
 export const useAuthStore = create<AuthState>((set) => ({
-  user: JSON.parse(localStorage.getItem(localStorageKey) || "null"),
+  user: JSON.parse(localStorage.getItem(localStorageKey) || 'null'),
   setUser: (user) => {
+    localStorage.setItem(localStorageKey, JSON.stringify(user));
     set({ user });
   },
   clearUser: () => {
