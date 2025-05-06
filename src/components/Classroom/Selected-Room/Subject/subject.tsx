@@ -8,7 +8,6 @@ import AddSubject from "./Dialog/add-subject";
 import { Link } from "react-router-dom";
 import { getUsers } from "@/services/user-services";
 import { useAuthStore } from "@/store/authStore";
-import { Subject } from "@/types/subject";
 
 interface Classroom {
   id: string;
