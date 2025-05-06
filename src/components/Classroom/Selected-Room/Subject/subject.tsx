@@ -22,7 +22,7 @@ interface SubjectTabProps {
 
 export default function SubjectTab({ classroom }: SubjectTabProps) {
   const [users, setUsers] = useState<any[]>([]);
-  const [userState, SetUserState] = useState<any>([]);
+  // const [userState, SetUserState] = useState<any>([]);
   const { user } = useAuthStore();
 
   const [classroomSubjects, setClassroomSubjects] = useState<any[]>([]);
@@ -51,14 +51,18 @@ export default function SubjectTab({ classroom }: SubjectTabProps) {
 
   useEffect(() => {
     const unsubscribe = getUsers(setUsers);
-    SetUserState(user);
     return () => unsubscribe();
   }, []);
 
   let filteredSubjects = [];
 
-  if (userState.role === "professor") {
-    const matchedUser = users.find((u) => u.id === userState.documentId);
+  if (user.role === "professor") {
+    const matchedUser = users.find((u) => u.id === user.documentId);
+    const subjectIds = matchedUser?.subjects ?? [];
+
+    filteredSubjects = classroomSubjects.filter((subject) => subjectIds.includes(subject.id));
+  } else if (user.role === "student") {
+    const matchedUser = users.find((u) => u.id === user.documentId);
     const subjectIds = matchedUser?.subjects ?? [];
 
     filteredSubjects = classroomSubjects.filter((subject) => subjectIds.includes(subject.id));
