@@ -50,7 +50,9 @@ export default function ExamInterface({
   const [timeLimit, setTimeLimit] = useState<number>(0);
   const [remainingTime, setRemainingTime] = useState<number>(0);
   const [isTimeUp, setIsTimeUp] = useState(false);
-  const [feedbackText, setFeedbackText] = useState<string>("");
+  // const [feedbackText, setFeedbackText] = useState<string | null>("");
+  const [feedbackText] = useState<string | null>("");
+
 
   useEffect(() => {
     const fetchExam = async () => {

@@ -121,6 +121,10 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
         (subjectId) => !currentSubjects.includes(subjectId)
       );
 
+      console.log("currentSubjects", currentSubjects);
+      console.log("updatedSubjects", updatedSubjects);
+      console.log("classroom id", classroom.id);
+
       await updateClassroomSubjects(classroom.id, [...currentSubjects, ...updatedSubjects]);
 
       const targetUsers = users.filter(
