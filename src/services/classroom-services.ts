@@ -1,11 +1,7 @@
 import { ref, set, push, get, onValue, update } from "firebase/database";
 import { database } from "@/lib/firebase";
 
-export const createClassroom = (
-  classroomName: string,
-  department: string,
-  userId: string
-) => {
+export const createClassroom = (classroomName: string, department: string, userId: string) => {
   const createdAt = new Date().toLocaleString("en-US", {
     year: "numeric",
     month: "2-digit",
@@ -32,9 +28,7 @@ export const checkIfClassroomExists = async (classroomName: string) => {
   if (snapshot.exists()) {
     const classrooms = snapshot.val();
 
-    return Object.values(classrooms).some(
-      (classroom: any) => classroom.name === classroomName
-    );
+    return Object.values(classrooms).some((classroom: any) => classroom.name === classroomName);
   }
 
   return false;
@@ -45,22 +39,20 @@ export const getClassrooms = (callback: (classrooms: any[]) => void) => {
   const unsubscribe = onValue(classroomsRef, (snapshot) => {
     if (snapshot.exists()) {
       const classroomData = snapshot.val();
-      const classroomArray = Object.entries(classroomData).map(
-        ([id, classroom]) => ({
-          id,
-          ...(classroom as Record<string, any>),
-        })
-      );
+      const classroomArray = Object.entries(classroomData).map(([id, classroom]) => ({
+        id,
+        ...(classroom as Record<string, any>),
+      }));
       callback(classroomArray);
     } else {
       callback([]);
     }
-  })
+  });
 
   return () => unsubscribe();
-}
+};
 
-export const updateClassroomSubjects = async (classroomId: string, subjectIds: number[]) => {
+export const updateClassroomSubjects = async (classroomId: string, subjectIds: string[]) => {
   const classroomRef = ref(database, `classrooms/${classroomId}`);
   await update(classroomRef, {
     subjects: subjectIds,

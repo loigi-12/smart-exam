@@ -2,10 +2,7 @@ import { ref, onValue } from "firebase/database";
 import { database } from "@/lib/firebase";
 import { Student } from "@/types/students";
 
-export const FetchUserClassrooms = (
-  userId: string,
-  callback: (classrooms: string[]) => void
-) => {
+export const FetchUserClassrooms = (userId: string, callback: (classrooms: string[]) => void) => {
   const userRef = ref(database, `users/${userId}/classrooms`);
 
   const unsubscribe = onValue(userRef, (snapshot) => {
@@ -20,10 +17,7 @@ export const FetchUserClassrooms = (
   return () => unsubscribe();
 };
 
-export const fetchStudentData = (
-  callback: (students: Student[]) => void,
-  subjectId?: string
-) => {
+export const fetchStudentData = (callback: (students: Student[]) => void, subjectId?: string) => {
   const userDataRef = ref(database, "users");
 
   const unsubscribe = onValue(userDataRef, (snapshot) => {
@@ -42,15 +36,14 @@ export const fetchStudentData = (
             studentId: student.studentId || "",
             department: student.department || "",
             program: student.program || "",
+            block: student.block || "",
             year: student.year || "",
             role: student.role || "",
           } as Student;
         })
         .filter((student) => {
           const isStudent = student.role === "student";
-          const isInClassroom = subjectId
-            ? student.subjectId.includes(subjectId)
-            : true;
+          const isInClassroom = subjectId ? student.subjectId.includes(subjectId) : true;
           return isStudent && isInClassroom;
         });
 

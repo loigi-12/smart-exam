@@ -39,8 +39,8 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [subjests, setSubjects] = useState<any[]>([]);
-  const [selectedSubject, setSelectedSubject] = useState<number[]>([]);
-  const [currentSubjects, setCurrentSubjects] = useState<number[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState<string[]>([]);
+  const [currentSubjects, setCurrentSubjects] = useState<string[]>([]);
   const [blocks, setBlocks] = useState<any[]>([]);
   const [selectedBlock, setSelectedBlock] = useState<number[]>([]);
   const [users, setUsers] = useState<any[]>([]);
@@ -70,7 +70,7 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
     fetchCurrentSubjects();
   }, [classroom.id]);
 
-  const toggleSelection = (id: number) => {
+  const toggleSelection = (id: string) => {
     setSelectedSubject((prev) =>
       prev.includes(id) ? prev.filter((subjectId) => subjectId !== id) : [...prev, id]
     );
@@ -120,6 +120,9 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
       const updatedSubjects = selectedSubject.filter(
         (subjectId) => !currentSubjects.includes(subjectId)
       );
+
+      console.log("updatedSubjects", updatedSubjects);
+      console.log("classroom id", classroom.id);
 
       await updateClassroomSubjects(classroom.id, [...currentSubjects, ...updatedSubjects]);
 
@@ -221,7 +224,6 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
                 ) : (
                   subjests
                     .filter((subject) => subject.createdBy === user.documentId)
-                    .filter((subject) => !currentSubjects.includes(subject.id))
                     .map((subject) => (
                       <div key={subject.id} className="flex items-center justify-between space-x-4">
                         <div className="flex items-center space-x-4">

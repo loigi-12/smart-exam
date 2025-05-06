@@ -60,20 +60,19 @@ export default function StudentTableList({
             <TableHead className="text-center">Name</TableHead>
             <TableHead className="text-center">Email</TableHead>
             <TableHead className="text-center">Department</TableHead>
+            <TableHead className="text-center">Block</TableHead>
             <TableHead className="text-center">Program</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {filteredStudents.length > 0 ? (
             filteredStudents.map((student) => (
-              <TableRow
-                key={student.id}
-                onClick={() => handleNavigateToProfile(student)}
-              >
+              <TableRow key={student.id} onClick={() => handleNavigateToProfile(student)}>
                 <TableCell>{student.studentId}</TableCell>
                 <TableCell>{student.name}</TableCell>
                 <TableCell>{student.email}</TableCell>
                 <TableCell>{student.department}</TableCell>
+                <TableCell>{student.block}</TableCell>
                 <TableCell>{student.program}</TableCell>
               </TableRow>
             ))
