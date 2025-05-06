@@ -44,7 +44,8 @@ export default function ExamInterface({ examId, onExamSubmit, subject }: ExamInt
   const [timeLimit, setTimeLimit] = useState<number>(0);
   const [remainingTime, setRemainingTime] = useState<number>(0);
   const [isTimeUp, setIsTimeUp] = useState(false);
-  const [feedbackText, setFeedbackText] = useState<string | null>("");
+  // const [feedbackText, setFeedbackText] = useState<string | null>("");
+  const [feedbackText] = useState<string | null>("");
 
   useEffect(() => {
     const fetchExam = async () => {
