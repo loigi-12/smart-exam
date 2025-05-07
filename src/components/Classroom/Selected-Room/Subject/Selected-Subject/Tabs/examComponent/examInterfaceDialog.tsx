@@ -30,11 +30,7 @@ interface ExamInterfaceProps {
   onExamSubmit: () => void;
   subject: any;
 }
-export default function ExamInterface({
-  examId,
-  onExamSubmit,
-  subject,
-}: ExamInterfaceProps) {
+export default function ExamInterface({ examId, onExamSubmit, subject }: ExamInterfaceProps) {
   const [examTitle, setExamTitle] = useState("");
   const [instructions, setInstructions] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -51,8 +47,7 @@ export default function ExamInterface({
   const [remainingTime, setRemainingTime] = useState<number>(0);
   const [isTimeUp, setIsTimeUp] = useState(false);
   // const [feedbackText, setFeedbackText] = useState<string | null>("");
-  const [feedbackText] = useState<string | null>("");
-
+  const [feedbackText] = useState<string>("");
 
   useEffect(() => {
     const fetchExam = async () => {
@@ -65,9 +60,7 @@ export default function ExamInterface({
           const start = new Date();
           const end = new Date(data.dueDate);
 
-          const totalSeconds = Math.floor(
-            (end.getTime() - start.getTime()) / 1000
-          );
+          const totalSeconds = Math.floor((end.getTime() - start.getTime()) / 1000);
 
           const formattedQuestions: Question[] = (data.questions || []).map(
             (q: any, index: number) => ({
@@ -120,10 +113,9 @@ export default function ExamInterface({
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-      2,
-      "0"
-    )}:${String(secs).padStart(2, "0")}`;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(
+      secs
+    ).padStart(2, "0")}`;
   };
 
   useEffect(() => {
@@ -175,9 +167,7 @@ export default function ExamInterface({
     for (const q of questions) {
       const userAnswerObj = answers[q.id];
       const userAnswer =
-        typeof userAnswerObj === "string"
-          ? userAnswerObj
-          : userAnswerObj?.answer ?? "";
+        typeof userAnswerObj === "string" ? userAnswerObj : userAnswerObj?.answer ?? "";
 
       if (q.type === "essay") {
         totalPossibleScore += q.essayScore || 0;
@@ -193,10 +183,7 @@ export default function ExamInterface({
               aiFeedback,
             };
           } catch (err) {
-            console.error(
-              `Failed to get AI feedback for essay question ${q.id}:`,
-              err
-            );
+            console.error(`Failed to get AI feedback for essay question ${q.id}:`, err);
             enhancedAnswers[q.id] = {
               answer: userAnswer,
               aiFeedback: {
@@ -227,7 +214,7 @@ export default function ExamInterface({
       totalQuestions: totalPossibleScore,
       submittedAt: new Date().toISOString(),
       answers: enhancedAnswers,
-      feedback: feedbackText.trim(),
+      feedback: feedbackText?.trim(),
     };
 
     const examSubmissionRef = ref(database, `userExams/${examId}`);
@@ -342,9 +329,7 @@ export default function ExamInterface({
                   }`}
                   strokeWidth="4"
                   strokeDasharray={Math.PI * 2 * 28}
-                  strokeDashoffset={
-                    (1 - remainingTime / timeLimit) * Math.PI * 2 * 28
-                  }
+                  strokeDashoffset={(1 - remainingTime / timeLimit) * Math.PI * 2 * 28}
                   strokeLinecap="round"
                   stroke="currentColor"
                   fill="transparent"
@@ -354,22 +339,15 @@ export default function ExamInterface({
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs text-muted-foreground">
-                  {formatTime(remainingTime)}
-                </span>
+                <span className="text-xs text-muted-foreground">{formatTime(remainingTime)}</span>
               </div>
             </div>
-            <span className="text-sm text-muted-foreground mt-1">
-              Time Remaining
-            </span>
+            <span className="text-sm text-muted-foreground mt-1">Time Remaining</span>
           </div>
         )}
 
         <div className="flex items-center gap-2 mb-2">
-          <Progress
-            value={((currentQuestionIndex + 1) / questions.length) * 100}
-            className="h-2"
-          />
+          <Progress value={((currentQuestionIndex + 1) / questions.length) * 100} className="h-2" />
           <span className="text-sm text-muted-foreground">
             Question {currentQuestionIndex + 1} of {questions.length}
           </span>
@@ -403,9 +381,7 @@ export default function ExamInterface({
               : goToNextQuestion
           }
         >
-          {currentQuestionIndex === questions.length - 1
-            ? "Submit Exam"
-            : "Next"}
+          {currentQuestionIndex === questions.length - 1 ? "Submit Exam" : "Next"}
         </Button>
       </div>
 
@@ -414,8 +390,8 @@ export default function ExamInterface({
           <DialogHeader>
             <DialogTitle>Submit Exam</DialogTitle>
             <DialogDescription>
-              Are you sure you want to submit the exam? You will not be able to
-              change your answers after submission.
+              Are you sure you want to submit the exam? You will not be able to change your answers
+              after submission.
             </DialogDescription>
           </DialogHeader>
           <Label htmlFor="feedback" className="block mt-4">
@@ -426,7 +402,8 @@ export default function ExamInterface({
             placeholder="Share your thoughts about the exam..."
             className="mt-1"
             value={feedbackText}
-            onChange={(e) => setFeedbackText(e.target.value)}
+            onChange={(e) => console.log("feedback", e.target.value)}
+            // onChange={(e) => setFeedbackText(e.target.value)}
             required
           />
           <DialogFooter>
@@ -437,11 +414,7 @@ export default function ExamInterface({
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleSubmitExam}
-              disabled={submitting}
-              className="text-white"
-            >
+            <Button onClick={handleSubmitExam} disabled={submitting} className="text-white">
               {submitting ? (
                 <span className="flex items-center gap-2">
                   <svg
