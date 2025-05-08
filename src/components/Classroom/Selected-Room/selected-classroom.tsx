@@ -31,17 +31,7 @@ export default function SelectedClassroom() {
         <h1 className="text-muted-foreground font-light">
           {selectedClassroom ? `${selectedClassroom.department}` : "Loading..."}
         </h1>
-        <Tabs
-          value={selectedTab}
-          onValueChange={setSelectedTab}
-          className="mb-5"
-        >
-          <TabsList className="flex">
-            <TabsTrigger value="subject">Subject</TabsTrigger>
-            {/* <TabsTrigger value="student">Student</TabsTrigger> */}
-            {/* <TabsTrigger value="settings">Settings</TabsTrigger> */}
-          </TabsList>
-        </Tabs>
+        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mb-5"></Tabs>
       </div>
 
       <div className="mt-2">

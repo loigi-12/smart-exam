@@ -12,10 +12,7 @@ import { CirclePlus } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import {
-  checkIfDepartmentExists,
-  createDepartment,
-} from "@/services/department-services";
+import { checkIfDepartmentExists, createDepartment } from "@/services/department-services";
 
 interface CreateDepartmentProps {
   onCreate: (departmentCode: string, departmentName: string) => void;
@@ -37,10 +34,7 @@ export default function CreateDepartment({ onCreate }: CreateDepartmentProps) {
     }
 
     try {
-      const isDuplicate = await checkIfDepartmentExists(
-        departmentCode,
-        departmentName
-      );
+      const isDuplicate = await checkIfDepartmentExists(departmentCode, departmentName);
 
       if (isDuplicate) {
         toast({
@@ -73,15 +67,13 @@ export default function CreateDepartment({ onCreate }: CreateDepartmentProps) {
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger>
         <Button className="w-full sm:w-auto flex items-center gap-2 text-white">
-          <CirclePlus /> Create Department
+          <CirclePlus /> Add Department
         </Button>
       </DialogTrigger>
       <DialogContent className="w-full max-w-[90vw] sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create Department</DialogTitle>
-          <DialogDescription>
-            Create a new department to start learning
-          </DialogDescription>
+          <DialogTitle>Add Department</DialogTitle>
+          <DialogDescription>Create a new department to start learning</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -105,11 +97,8 @@ export default function CreateDepartment({ onCreate }: CreateDepartmentProps) {
           </div>
         </div>
 
-        <Button
-          className="w-full sm:w-auto text-white"
-          onClick={handleCreateDepartment}
-        >
-          Create Department
+        <Button className="w-full sm:w-auto text-white" onClick={handleCreateDepartment}>
+          Add Department
         </Button>
       </DialogContent>
     </Dialog>

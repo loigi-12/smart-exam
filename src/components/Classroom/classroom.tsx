@@ -46,7 +46,7 @@ export default function ClassroomPage() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="w-full sm:w-auto">
             <Input
-              placeholder="Search Department Room"
+              placeholder="Search Year Level"
               className="w-full sm:w-64"
               onChange={(e) => setSearchQuery(e.target.value)}
             />

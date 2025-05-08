@@ -18,10 +18,7 @@ import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import {
-  createClassroom,
-  checkIfClassroomExists,
-} from "../../../services/classroom-services";
+import { createClassroom, checkIfClassroomExists } from "../../../services/classroom-services";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/authStore";
 import { getDepartments } from "@/services/department-services";
@@ -36,9 +33,7 @@ export default function CreateClassroom({ onCreate }: CreateClassroomProps) {
   const [department, setDepartment] = useState("");
   const { toast } = useToast();
   const { user } = useAuthStore();
-  const [departmentList, setDepartmentList] = useState<
-    { id: string; name: string }[]
-  >([]);
+  const [departmentList, setDepartmentList] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
     const unsubscribe = getDepartments((departments) => {
@@ -93,16 +88,14 @@ export default function CreateClassroom({ onCreate }: CreateClassroomProps) {
       <DialogTrigger asChild>
         <Button className="w-full sm:w-auto flex items-center gap-2 text-white">
           <CirclePlus className="w-5 h-5" />
-          Create Department Room
+          Add Year Level
         </Button>
       </DialogTrigger>
 
       <DialogContent className="w-full max-w-[90vw] sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Create Year Level</DialogTitle>
-          <DialogDescription>
-            Create a new year level to start learning
-          </DialogDescription>
+          <DialogDescription>Create a new year level to start learning</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -134,10 +127,7 @@ export default function CreateClassroom({ onCreate }: CreateClassroomProps) {
           </div>
         </div>
 
-        <Button
-          className="w-full sm:w-auto text-white"
-          onClick={handleCreateClassroom}
-        >
+        <Button className="w-full sm:w-auto text-white" onClick={handleCreateClassroom}>
           Create Classroom
         </Button>
       </DialogContent>

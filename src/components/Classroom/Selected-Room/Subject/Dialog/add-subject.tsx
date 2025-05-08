@@ -185,7 +185,7 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
       <DialogTrigger asChild>
         {user.role === "admin" && (
           <Button className="w-full sm:w-auto flex items-center gap-2 text-white">
-            <CirclePlus /> Add Block
+            <CirclePlus /> Assign Blocks and Subjects
           </Button>
         )}
       </DialogTrigger>
