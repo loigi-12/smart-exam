@@ -9,14 +9,14 @@ import {
 export default function HeaderProfessor() {
   const { user } = useAuthStore();
   const [classroomCount, setClassroomCount] = useState(0);
-  const [studentCount, setStudentCount] = useState(0);
+  // const [studentCount, setStudentCount] = useState(0);
   const [examCount, setExamCount] = useState(0);
 
   useEffect(() => {
     if (user?.documentId) {
       const unsubscribeClassrooms = getClassroomsByProfessor(user.documentId, (data) => {
         setClassroomCount(data.classroomCount);
-        setStudentCount(data.studentCount);
+        // setStudentCount(data.studentCount);
       });
 
       const unsubscribeExams = getExamsByProfessorSubjects(user.documentId, (count) => {
