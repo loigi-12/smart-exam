@@ -11,10 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { toast } = useToast();
@@ -24,11 +21,7 @@ export function LoginForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       const usersRef = ref(database, "users");
@@ -75,9 +68,7 @@ export function LoginForm({
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
-                <p className="text-balance text-muted-foreground">
-                  Login to your EduSphere account
-                </p>
+                <p className="text-balance text-muted-foreground">Login to your account</p>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -109,7 +100,7 @@ export function LoginForm({
           </form>
           <div className="relative hidden bg-zinc-300 dark:bg-slate-200 md:block">
             <img
-              src="/logo.jpg"
+              src="/logo.png"
               alt="Image"
               className="absolute inset-0 m-auto h-4/5 object-cover"
             />
@@ -117,8 +108,8 @@ export function LoginForm({
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        By clicking continue, you agree to our <a href="#">Terms of Service</a> and{" "}
+        <a href="#">Privacy Policy</a>.
       </div>
     </div>
   );
