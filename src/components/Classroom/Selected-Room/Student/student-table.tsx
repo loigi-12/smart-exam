@@ -26,7 +26,6 @@ export default function StudentTableList({
   subject,
 }: StudentTableListProps) {
   const [students, setStudents] = useState<Student[]>([]);
-  const [selectedYear, setSelectedYear] = useState("");
   const [selectedBlock, setSelectedBlock] = useState("");
 
   const navigate = useNavigate();
@@ -83,8 +82,7 @@ export default function StudentTableList({
 
   const visibleStudents = filteredStudents.filter((s) => {
     const blockMatch = selectedBlock ? s.block?.includes(selectedBlock) : true;
-    const yearMatch = selectedYear ? s.year === selectedYear : true;
-    return blockMatch && yearMatch;
+    return blockMatch;
   });
 
   return (

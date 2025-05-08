@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { useParams } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { getClassrooms } from "../../../services/classroom-services";
 import { Card } from "@/components/ui/card";
 import SubjectTab from "./Subject/subject";
