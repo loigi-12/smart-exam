@@ -30,7 +30,7 @@ export default function HeaderProfessor() {
   }, [user?.documentId]);
 
   return (
-    <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+    <div className="grid auto-rows-min gap-4 md:grid-cols-2">
       <Card>
         <CardHeader>
           <CardTitle>Class handled</CardTitle>
@@ -54,20 +54,6 @@ export default function HeaderProfessor() {
           <div>
             <h1 className="text-4xl font-bold text-[#182b5c] dark:text-[#ff914d]">{examCount}</h1>
             <h1 className="text-sm text-zinc-500">Exam created</h1>
-          </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Total Student</CardTitle>
-          <CardDescription>Displays joined student in classroom</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div>
-            <h1 className="text-4xl font-bold text-[#182b5c] dark:text-[#ff914d]">
-              {studentCount}
-            </h1>
-            <h1 className="text-sm text-zinc-500">Joined student in your classroom</h1>
           </div>
         </CardContent>
       </Card>

@@ -225,7 +225,6 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
                 ) : (
                   subjests
                     .filter((subject) => subject.createdBy === user.documentId)
-                    .filter((subject) => !currentSubjects.includes(subject.id))
                     .map((subject) => (
                       <div key={subject.id} className="flex items-center justify-between space-x-4">
                         <div className="flex items-center space-x-4">
