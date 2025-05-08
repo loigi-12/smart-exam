@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import TableFilter from "../TableFilter";
 
 interface Student {
   id: string;
@@ -33,6 +34,10 @@ export default function StudentManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const [sortByName, setSortByName] = useState<"asc" | "desc" | null>(null);
+
+  const [selectedBlock, setSelectedBlock] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
+  const [selectedYearIndex, setSelectedYearIndex] = useState(-1);
 
   useEffect(() => {
     const studentsRef = ref(database, "users");
@@ -61,6 +66,21 @@ export default function StudentManagement() {
       })
     : filteredStudents;
 
+  const uniqueBlocks = Array.from(new Set(filteredStudents.flatMap((s) => s.block ?? []))).sort();
+  const uniqueYears = Array.from(
+    new Set(filteredStudents.map((s) => s.year).filter(Boolean))
+  ).sort();
+
+  const filteredBlocks = selectedYearIndex
+    ? uniqueBlocks.filter((b) => b.includes(selectedYearIndex.toString()))
+    : uniqueBlocks;
+
+  const visibleStudents = filteredStudents.filter((s) => {
+    const blockMatch = selectedBlock ? s.block?.includes(selectedBlock) : true;
+    const yearMatch = selectedYear ? s.year?.includes(selectedYear) : true;
+    return yearMatch && blockMatch;
+  });
+
   const handleNavigateToProfile = (student: Student) => {
     navigate(`/main/users/profile`, { state: { student, source: "users" } });
   };
@@ -74,49 +94,58 @@ export default function StudentManagement() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <h2 className="hidden sm:block text-sm text-zinc-400 font-normal">
-          Student Management
-        </h2>
+        <h2 className="hidden sm:block text-sm text-zinc-400 font-normal">Student Management</h2>
         <StudentDialog setStudents={setStudents} />
       </div>
-      <div className="mb-4">
-        <Button
-          variant="outline"
-          onClick={() =>
-            setSortByName((prev) => (prev === "asc" ? "desc" : "asc"))
-          }
-        >
-          Sort by: Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+      <div className="flex items-center gap-3 mb-4">
+        <h3>Filter</h3>
+
+        <TableFilter
+          label="Year"
+          data={uniqueYears}
+          onSelectFilter={(year) => {
+            setSelectedYear(year);
+            setSelectedYearIndex(uniqueYears.indexOf(year) + 1);
+          }}
+        />
+
+        {selectedYear && (
+          <TableFilter
+            label="Block"
+            data={filteredBlocks}
+            onSelectFilter={(block) => setSelectedBlock(block)}
+          />
+        )}
       </div>
       <Table className="text-center cursor-pointer border-collapse border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-center">Name</TableHead>
-            <TableHead className="text-center">Email</TableHead>
+            <TableHead className="text-center">#</TableHead>
             <TableHead className="text-center">Student ID</TableHead>
-            <TableHead className="text-center">Block</TableHead>
+            <TableHead className="text-center">Name</TableHead>
+            {/* <TableHead className="text-center">Email</TableHead> */}
             <TableHead className="text-center">Department</TableHead>
             <TableHead className="text-center">Year</TableHead>
+            <TableHead className="text-center">Block</TableHead>
             <TableHead className="text-center">Program</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedStudents.map((student) => (
+          {visibleStudents.map((student, index) => (
             <TableRow
               key={student.id}
               className="border"
               onClick={() => handleNavigateToProfile(student)}
             >
-              <TableCell>{student.name}</TableCell>
-              <TableCell>{student.email}</TableCell>
+              <TableCell>{index + 1}</TableCell>
               <TableCell>{student.studentId}</TableCell>
-              <TableCell>{student.block}</TableCell>
+              <TableCell>{student.name}</TableCell>
+              {/* <TableCell>{student.email}</TableCell> */}
               <TableCell>
                 <Badge variant="secondary">{student.department}</Badge>
               </TableCell>
               <TableCell>{student.year}</TableCell>
+              <TableCell>{student.block}</TableCell>
               <TableCell>{student.program}</TableCell>
             </TableRow>
           ))}

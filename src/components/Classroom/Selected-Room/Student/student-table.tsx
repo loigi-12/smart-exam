@@ -12,7 +12,7 @@ import { Student } from "@/types/students";
 import { fetchStudentData } from "@/services/user-services";
 import { useNavigate } from "react-router-dom";
 import { Subject } from "@/types/subject";
-import StudentTableFilter from "@/components/StudentTableFilter";
+import TableFilter from "@/components/TableFilter";
 
 interface StudentTableListProps {
   // classroom: Classroom | null;
@@ -90,9 +90,9 @@ export default function StudentTableList({
       <div className="flex items-center my-2 gap-3">
         <h3>Filter</h3>
 
-        <StudentTableFilter
+        <TableFilter
           label="Block"
-          blocks={uniqueBlocks}
+          data={uniqueBlocks}
           onSelectFilter={(block) => setSelectedBlock(block)}
         />
       </div>
