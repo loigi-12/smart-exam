@@ -13,8 +13,8 @@ import StudentDialog from "./studentDialog";
 import { Input } from "../ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import { ArrowUpDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// import { ArrowUpDown } from "lucide-react";
+// import { Button } from "@/components/ui/button";
 import TableFilter from "../TableFilter";
 
 interface Student {
@@ -33,7 +33,6 @@ export default function StudentManagement() {
   const [students, setStudents] = useState<Student[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-  const [sortByName, setSortByName] = useState<"asc" | "desc" | null>(null);
 
   const [selectedBlock, setSelectedBlock] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
@@ -55,16 +54,6 @@ export default function StudentManagement() {
   const filteredStudents = students.filter((student) =>
     student.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const sortedStudents = sortByName
-    ? [...filteredStudents].sort((a, b) => {
-        if (sortByName === "asc") {
-          return a.name.localeCompare(b.name);
-        } else {
-          return b.name.localeCompare(a.name);
-        }
-      })
-    : filteredStudents;
 
   const uniqueBlocks = Array.from(new Set(filteredStudents.flatMap((s) => s.block ?? []))).sort();
   const uniqueYears = Array.from(
