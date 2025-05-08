@@ -10,8 +10,11 @@ import GradeTab from "./Tabs/grade";
 import { Subject } from "@/types/subject";
 import { Classroom } from "@/types/classroom";
 import StudentTab from "../../Student/student";
+import { useAuthStore } from "@/store/authStore";
 
 export default function SelectedSubjectInRoom() {
+  const user = useAuthStore((state) => state.user) || {};
+
   const { id } = useParams();
   const [subject, setSubject] = useState<Subject | null>(null);
   const [classroom, setClassroom] = useState<Classroom | null>(null);
@@ -96,7 +99,8 @@ export default function SelectedSubjectInRoom() {
             <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mb-5">
               <TabsList className="flex">
                 <TabsTrigger value="exam">Exam</TabsTrigger>
-                <TabsTrigger value="student">Student</TabsTrigger>
+                {user.role !== "student" && <TabsTrigger value="student">Student</TabsTrigger>}
+
                 <TabsTrigger value="grade">Grade</TabsTrigger>
               </TabsList>
             </Tabs>

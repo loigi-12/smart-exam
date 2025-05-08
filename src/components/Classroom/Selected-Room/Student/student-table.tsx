@@ -98,7 +98,6 @@ export default function StudentTableList({
           onSelectFilter={(block) => setSelectedBlock(block)}
         />
       </div>
-
       <Table className="text-center cursor-pointer border-collapse border">
         <TableHeader>
           <TableRow>
