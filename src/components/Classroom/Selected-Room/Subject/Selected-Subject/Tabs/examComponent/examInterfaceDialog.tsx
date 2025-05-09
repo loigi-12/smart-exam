@@ -367,7 +367,8 @@ export default function ExamInterface({ examId, onExamSubmit, subject }: ExamInt
         <Button
           variant="outline"
           onClick={goToPreviousQuestion}
-          disabled={currentQuestionIndex === 0}
+          // disabled={currentQuestionIndex === 0}
+          disabled
         >
           Previous
         </Button>
