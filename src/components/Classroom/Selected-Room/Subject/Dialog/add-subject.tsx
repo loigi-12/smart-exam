@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getSubjects } from "@/services/subject-services";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getClassroomSubjects, updateClassroomSubjects } from "@/services/classroom-services";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +22,7 @@ import { getBlocks } from "@/services/block-services";
 import { getUsers } from "@/services/user-services";
 import { ref, update } from "firebase/database";
 import { database } from "@/lib/firebase";
+import ListFilter from "@/components/ListFilter";
 
 interface Classroom {
   id: string;
@@ -45,6 +46,9 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
   const [selectedBlock, setSelectedBlock] = useState<number[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+  const [selectedUser, setSelectedUser] = useState("student");
+  const [selectedYear, setSelectedYear] = useState("1st Year");
+  const [selectedYearIndex, setSelectedYearIndex] = useState(0);
 
   useEffect(() => {
     const unsubscribe = getSubjects(setSubjects);
@@ -121,10 +125,6 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
         (subjectId) => !currentSubjects.includes(subjectId)
       );
 
-      console.log("currentSubjects", currentSubjects);
-      console.log("updatedSubjects", updatedSubjects);
-      console.log("classroom id", classroom.id);
-
       await updateClassroomSubjects(classroom.id, [...currentSubjects, ...updatedSubjects]);
 
       const targetUsers = users.filter(
@@ -180,6 +180,16 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
     }
   };
 
+  const uniqueRoles = Array.from(new Set(users.flatMap((r) => r.role ?? []))).filter(
+    (s) => s !== "admin"
+  );
+  const visibleUsers = selectedUser ? users.filter((u) => u.role === selectedUser) : users;
+
+  const uniqueYears = Array.from(new Set(users.map((s) => s.year).filter(Boolean))).sort();
+  const visibleBlocks = selectedYearIndex
+    ? blocks.filter((b) => b.name.includes(selectedYearIndex))
+    : blocks.filter((b) => b.name.includes(1));
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
@@ -216,7 +226,6 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
                   Select All
                 </Label>
               </div>
-              <p className="text-sm text-muted-foreground">Department Subjects</p>
             </div>
             <ScrollArea className="rounded-md cursor-pointer">
               <div className="space-y-4">
@@ -240,7 +249,6 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
                             <p>{subject.name}</p>
                           </div>
                         </div>
-                        <Badge variant="outline">{subject.department}</Badge>
                       </div>
                     ))
                 )}
@@ -266,30 +274,31 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
             </div>
             <ScrollArea className="rounded-md cursor-pointer">
               <div className="space-y-4">
-                {users.length === 0 ? (
+                {!users && (
                   <p className="text-zinc-500">No blocks available for this department.</p>
-                ) : (
-                  users
-                    .filter((user) => user.department == classroom.department)
-                    .map((user) => (
-                      <div key={user.id} className="flex items-center justify-between space-x-4">
-                        <div className="flex items-center space-x-4">
-                          <Checkbox
-                            id={`select-${user.id}`}
-                            checked={selectedUsers.includes(user.id)}
-                            onCheckedChange={() => toggleUserSelection(user.id)}
-                          />
-                          <Avatar>
-                            <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p>{user.name}</p>
-                          </div>
-                        </div>
-                        <Badge variant="outline">{user.role}</Badge>
-                      </div>
-                    ))
                 )}
+
+                <ListFilter lists={uniqueRoles} onSelectItem={(role) => setSelectedUser(role)} />
+
+                {visibleUsers
+                  .filter((user) => user.department == classroom.department)
+                  .map((user) => (
+                    <div key={user.id} className="flex items-center justify-between space-x-4">
+                      <div className="flex items-center space-x-4">
+                        <Checkbox
+                          id={`select-${user.id}`}
+                          checked={selectedUsers.includes(user.id)}
+                          onCheckedChange={() => toggleUserSelection(user.id)}
+                        />
+                        <Avatar>
+                          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p>{user.name}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
               </div>
             </ScrollArea>
           </div>
@@ -313,27 +322,35 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
             </div>
             <ScrollArea className="rounded-md cursor-pointer">
               <div className="space-y-4">
-                {blocks.length === 0 ? (
+                {!visibleBlocks && (
                   <p className="text-zinc-500">No blocks available for this department.</p>
-                ) : (
-                  blocks.map((block) => (
-                    <div key={block.id} className="flex items-center justify-between space-x-4">
-                      <div className="flex items-center space-x-4">
-                        <Checkbox
-                          id={`select-${block.id}`}
-                          checked={selectedBlock.includes(block.id)}
-                          onCheckedChange={() => toggleBlockSelection(block.id)}
-                        />
-                        <Avatar>
-                          <AvatarFallback>{block.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p>{block.name}</p>
-                        </div>
+                )}
+
+                <ListFilter
+                  lists={uniqueYears}
+                  onSelectItem={(year) => {
+                    setSelectedYear(year);
+                    setSelectedYearIndex(uniqueYears.indexOf(year) + 1);
+                  }}
+                />
+
+                {visibleBlocks.map((block) => (
+                  <div key={block.id} className="flex items-center justify-between space-x-4">
+                    <div className="flex items-center space-x-4">
+                      <Checkbox
+                        id={`select-${block.id}`}
+                        checked={selectedBlock.includes(block.id)}
+                        onCheckedChange={() => toggleBlockSelection(block.id)}
+                      />
+                      <Avatar>
+                        <AvatarFallback>{block.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p>{block.name}</p>
                       </div>
                     </div>
-                  ))
-                )}
+                  </div>
+                ))}
               </div>
             </ScrollArea>
           </div>

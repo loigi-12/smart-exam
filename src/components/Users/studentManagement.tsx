@@ -112,7 +112,7 @@ export default function StudentManagement() {
             <TableHead className="text-center">#</TableHead>
             <TableHead className="text-center">Student ID</TableHead>
             <TableHead className="text-center">Name</TableHead>
-            {/* <TableHead className="text-center">Email</TableHead> */}
+            <TableHead className="text-center">Email</TableHead>
             <TableHead className="text-center">Department</TableHead>
             <TableHead className="text-center">Year</TableHead>
             <TableHead className="text-center">Block</TableHead>
@@ -129,7 +129,7 @@ export default function StudentManagement() {
               <TableCell>{index + 1}</TableCell>
               <TableCell>{student.studentId}</TableCell>
               <TableCell>{student.name}</TableCell>
-              {/* <TableCell>{student.email}</TableCell> */}
+              <TableCell>{student.email}</TableCell>
               <TableCell>
                 <Badge variant="secondary">{student.department}</Badge>
               </TableCell>

@@ -394,7 +394,7 @@ export default function ExamInterface({ examId, onExamSubmit, subject }: ExamInt
               after submission.
             </DialogDescription>
           </DialogHeader>
-          <Label htmlFor="feedback" className="block mt-4">
+          {/* <Label htmlFor="feedback" className="block mt-4">
             Feedback
           </Label>
           <Textarea
@@ -405,7 +405,7 @@ export default function ExamInterface({ examId, onExamSubmit, subject }: ExamInt
             onChange={(e) => console.log("feedback", e.target.value)}
             // onChange={(e) => setFeedbackText(e.target.value)}
             required
-          />
+          /> */}
           <DialogFooter>
             <Button
               variant="outline"
