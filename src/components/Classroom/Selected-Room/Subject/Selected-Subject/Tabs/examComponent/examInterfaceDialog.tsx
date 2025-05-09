@@ -22,8 +22,6 @@ import { Question } from "@/types/question";
 import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/hooks/use-toast";
 import { getEssayFeedback } from "@/lib/getEssayFeedback";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 
 interface ExamInterfaceProps {
   examId: string;

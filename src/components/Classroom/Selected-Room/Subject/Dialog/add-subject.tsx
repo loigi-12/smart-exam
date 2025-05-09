@@ -184,8 +184,10 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
     (s) => s !== "admin"
   );
   const visibleUsers = selectedUser ? users.filter((u) => u.role === selectedUser) : users;
-
   const uniqueYears = Array.from(new Set(users.map((s) => s.year).filter(Boolean))).sort();
+
+  console.log("selectedYearIndex", selectedYear);
+
   const visibleBlocks = selectedYearIndex
     ? blocks.filter((b) => b.name.includes(selectedYearIndex))
     : blocks.filter((b) => b.name.includes(1));
