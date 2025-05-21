@@ -41,18 +41,15 @@ export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
 
   const checkIfSubmitted = async (examId: string) => {
     if (!user?.documentId) return false;
-    const userExamRef = ref(
-      database,
-      `userExams/${examId}/users/${user.documentId}`
-    );
+    const userExamRef = ref(database, `userExams/${examId}/users/${user.documentId}`);
     const snapshot = await get(userExamRef);
     return snapshot.exists();
   };
   useEffect(() => {
     if (!subject?.id) return;
-  
+
     const examsRef = ref(database, "exams");
-  
+
     const unsubscribe = onValue(examsRef, (snapshot) => {
       if (snapshot.exists()) {
         const examData = snapshot.val();
@@ -61,7 +58,7 @@ export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
             const startDate = new Date(data.startDate);
             const dueDate = new Date(data.dueDate);
             const createdAt = new Date(data.createdAt);
-  
+
             return {
               id,
               title: data.name,
@@ -73,18 +70,16 @@ export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
           })
           .filter((exam) => exam.subjectId === subject.id)
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // newest first
-  
-        console.log(loadedExams);
+
         setExams(loadedExams);
       } else {
         setExams([]);
       }
       setLoading(false);
     });
-  
+
     return () => unsubscribe();
   }, [subject?.id]);
-  
 
   const handleEditExam = (examId: string) => {
     setSelectedExam(examId);
@@ -97,12 +92,9 @@ export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
 
   const filteredExams = useMemo(() => {
     return exams
-      .filter((exam) =>
-        exam.title.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+      .filter((exam) => exam.title.toLowerCase().includes(searchQuery.toLowerCase()))
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [exams, searchQuery]);
-  
 
   const handleConfirmExam = () => {
     setDialogOpen(false);
@@ -203,9 +195,7 @@ export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
             >
               <CardContent className="p-4 flex justify-between">
                 <div>
-                  <h3 className="font-medium text-black dark:text-white">
-                    {exam.title}
-                  </h3>
+                  <h3 className="font-medium text-black dark:text-white">{exam.title}</h3>
                   <div className="text-sm text-muted-foreground space-y-1">
                     <div>
                       Starts:{" "}
@@ -232,21 +222,15 @@ export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
                 )}
               </CardContent>
             </Card>
-                    
           ))
         ) : (
-          <div className="text-center py-8 text-muted-foreground">
-            No exams found.
-          </div>
+          <div className="text-center py-8 text-muted-foreground">No exams found.</div>
         )}
       </div>
 
       <ConfirmationDialog
         examTitle={
-          selectedExam
-            ? exams.find((exam) => exam.id === selectedExam)?.title ||
-              "this exam"
-            : ""
+          selectedExam ? exams.find((exam) => exam.id === selectedExam)?.title || "this exam" : ""
         }
         open={dialogOpen}
         onOpenChange={setDialogOpen}

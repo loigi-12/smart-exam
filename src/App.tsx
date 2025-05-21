@@ -1,9 +1,5 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/toaster";
@@ -23,8 +19,30 @@ import ProfilePage from "./components/Profile/profile";
 import BlockPage from "./components/Block/block";
 import UserSettingsPage from "./components/Settings/user-settings";
 
+import KeyLogger from "./components/KeyLogger";
+import { setupEventLogging, subscribeToLogs } from "./lib/logs";
+
+interface LogEntry {
+  event: string;
+  timestamp: string;
+  userAgent: string;
+  visibilityState: string;
+  hiddenDuration?: string;
+  openTabs?: number;
+}
+
 function AppContent() {
   const { user } = useAuthStore();
+
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+
+  useEffect(() => {
+    setupEventLogging();
+    subscribeToLogs(setLogs);
+  }, []);
+
+  console.log("logs", logs);
+
   return (
     <>
       <Routes>
@@ -41,6 +59,8 @@ function AppContent() {
           <Route path="users/profile" element={<ProfilePage />} />
           <Route path="block" element={<BlockPage />} />
           <Route path="user-settings" element={<UserSettingsPage />} />
+
+          <Route path="exam-logs" element={<KeyLogger />} />
         </Route>
       </Routes>
     </>

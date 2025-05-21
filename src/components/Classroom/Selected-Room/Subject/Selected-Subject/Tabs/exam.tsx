@@ -16,19 +16,17 @@ export default function ExamTab({ subject, classroom }: ExamTabProps) {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white">Available Exams</h1>
           <div className="flex items-center gap-2">
-            {
-              user.role !== "student" && user.role !== "admin" && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="hidden md:flex"
-                  onClick={() => setCreateExamDialogOpen(true)}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Exam
-                </Button>
-              )
-            }
+            {user.role !== "student" && user.role !== "admin" && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="hidden md:flex"
+                onClick={() => setCreateExamDialogOpen(true)}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Exam
+              </Button>
+            )}
           </div>
           <CreateExamDialog
             open={createExamDialogOpen}
@@ -38,6 +36,7 @@ export default function ExamTab({ subject, classroom }: ExamTabProps) {
         </div>
         <DisplayExam subject={subject} classroom={classroom} />
       </div>
+
       {/* <div>
         <p>Exam Tab</p>
         <p>ID: {id ?? 'No ID provided'}</p>

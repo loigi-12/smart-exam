@@ -33,7 +33,6 @@ export default function SelectedClassroom() {
         </h1>
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mb-5"></Tabs>
       </div>
-
       <div className="mt-2">
         <Tabs defaultValue="subject" className="w-full">
           <TabsContent value="subject">
