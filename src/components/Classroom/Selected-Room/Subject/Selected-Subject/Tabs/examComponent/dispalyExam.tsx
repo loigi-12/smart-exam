@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Exam } from "@/types/Exam";
 import ConfirmationDialog from "./ConfirmationDialog";
 import ExamInterface from "./examInterfaceDialog";
-import { Search, CopyCheck } from "lucide-react"; // Import the Edit icon
+import { Search, CopyCheck, FileDown } from "lucide-react"; // Import the Edit icon
 import { Input } from "@/components/ui/input";
 import { database } from "@/lib/firebase";
 import { ref, onValue, get } from "firebase/database";
@@ -19,13 +19,32 @@ import { Classroom } from "@/types/classroom";
 import ExamDialog from "./createExamDialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/authStore";
+import { format, isValid } from "date-fns";
 
 interface DisplayExamProps {
   subject: { id: string };
   classroom: Classroom;
 }
 
-import { format, isValid } from "date-fns";
+interface Question {
+  id: string;
+  type: string;
+  text: string;
+  options?: string[];
+  answer?: string;
+  essayScore?: number;
+}
+
+interface _Exam {
+  id: string;
+  title: string;
+  startDate: string;
+  dueDate: string;
+  createdAt: string;
+  subjectId: string;
+  questions: Question[];
+  instructions: string;
+}
 
 export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
   const { user } = useAuthStore();
@@ -66,6 +85,8 @@ export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
               dueDate: isNaN(dueDate.getTime()) ? "" : data.dueDate,
               createdAt: isNaN(createdAt.getTime()) ? "" : data.createdAt,
               subjectId: data.subjectId,
+              questions: data.questions,
+              instructions: data.instructions,
             };
           })
           .filter((exam) => exam.subjectId === subject.id)
@@ -85,6 +106,97 @@ export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
     setSelectedExam(examId);
     setEditDialogOpen(true);
   };
+
+  const handleExportExam = (examId: string) => {
+    setSelectedExam(examId);
+
+    const exam = exams.find((e) => e.id === examId) as _Exam | undefined;
+    if (exam) {
+      console.log(exam);
+      exportToCSV(exam);
+    } else {
+      console.error("Exam not found");
+    }
+  };
+
+  const headers = [
+    "section",
+    "id",
+    "type",
+    "text",
+    "options",
+    "answer",
+    "essayScore",
+    "name",
+    "instructions",
+  ];
+
+  function exportToCSV(exam: _Exam, filename = "questions.csv"): void {
+    const csvRows: string[] = [headers.join(",")];
+
+    // First row: meta section
+    const metaRow = headers.map((header) => {
+      if (header === "section") return "meta";
+      if (header === "name") return exam.title;
+      if (header === "instructions") return exam.instructions;
+      return "";
+    });
+    csvRows.push(metaRow.join(","));
+
+    // Question rows
+    exam.questions.forEach((q) => {
+      const row = headers.map((header) => {
+        let cell: string = "";
+
+        switch (header) {
+          case "section":
+            cell = "question";
+            break;
+          case "id":
+            cell = q.id;
+            break;
+          case "type":
+            cell = q.type;
+            break;
+          case "text":
+            cell = q.text;
+            break;
+          case "options":
+            cell = q.options?.join("| ") ?? "";
+            break;
+          case "answer":
+            cell = q.answer ?? "";
+            break;
+          case "essayScore":
+            cell = q.essayScore !== undefined ? q.essayScore.toString() : "";
+            break;
+          case "name":
+          case "instructions":
+            cell = "";
+            break;
+        }
+
+        // Escape CSV-sensitive characters
+        if (cell.includes(",") || cell.includes('"') || cell.includes("\n")) {
+          cell = `"${cell.replace(/"/g, '""')}"`;
+        }
+
+        return cell;
+      });
+
+      csvRows.push(row.join(","));
+    });
+
+    // Create and download CSV file
+    const csvString = csvRows.join("\n");
+    const blob = new Blob([csvString], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
   // const filteredExams = exams.filter((exam) =>
   //   exam.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -122,9 +234,6 @@ export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
     const currentDate = new Date();
     const startDate = new Date(selected.startDate);
     const dueDate = new Date(selected.dueDate);
-    console.log("Current Date:", currentDate);
-    console.log("Start Date:", startDate);
-    console.log("Due Date:", dueDate);
     if (currentDate < startDate) {
       toast({
         title: "Exam Not Yet Open",
@@ -212,13 +321,22 @@ export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
                   </div>
                 </div>
                 {user.role === "professor" && (
-                  <CopyCheck
-                    className="text-primary cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEditExam(exam.id);
-                    }}
-                  />
+                  <div className="flex flex-col justify-between gap-2">
+                    <CopyCheck
+                      className="text-primary cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditExam(exam.id);
+                      }}
+                    />
+                    <FileDown
+                      className="text-green-700 cursor-pointer"
+                      onClick={(e) => {
+                        handleExportExam(exam.id);
+                        e.stopPropagation();
+                      }}
+                    />
+                  </div>
                 )}
               </CardContent>
             </Card>
