@@ -175,7 +175,7 @@ export default function ExamInterface({ examId, onExamSubmit, subject }: ExamInt
             const aiFeedback = await getEssayFeedback(q.question, userAnswer);
             const rating = aiFeedback?.rating ?? 0;
 
-            calculatedScore += rating;
+            calculatedScore += Math.round((rating / 10) * q.essayScore);
             enhancedAnswers[q.id] = {
               answer: userAnswer,
               aiFeedback,
