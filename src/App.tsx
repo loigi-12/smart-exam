@@ -69,6 +69,8 @@ function AppContent() {
         }
       }
     }
+
+    console.log(logs);
   }, []);
 
   return (

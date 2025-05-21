@@ -190,6 +190,8 @@ export default function AddSubject({ classroom, onSubjectsUpdated }: AddSubjectP
     ? blocks.filter((b) => b.name.includes(selectedYearIndex))
     : blocks.filter((b) => b.name.includes(1));
 
+  console.log(selectedYear);
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
