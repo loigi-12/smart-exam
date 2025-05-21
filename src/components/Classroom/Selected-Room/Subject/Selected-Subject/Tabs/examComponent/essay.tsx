@@ -1,17 +1,17 @@
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input' // Assuming you have an Input component
-import { useState, useEffect } from 'react'
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input"; // Assuming you have an Input component
+import { useState, useEffect } from "react";
 
 interface EssayQuestionProps {
   question: {
-    id: string
-    question: string
-    expectedWordCount: number
-  }
-  answer: string
-  onAnswerChange: (answer: string) => void
-  essayScore?: number
+    id: string;
+    question: string;
+    expectedWordCount: number;
+  };
+  answer: string;
+  onAnswerChange: (answer: string) => void;
+  essayScore?: number;
 }
 
 export default function EssayQuestion({
@@ -20,14 +20,36 @@ export default function EssayQuestion({
   onAnswerChange,
   essayScore,
 }: EssayQuestionProps) {
-  const [wordCount, setWordCount] = useState(0)
+  const [wordCount, setWordCount] = useState(0);
 
   useEffect(() => {
-    const words = answer.trim() ? answer.trim().split(/\s+/).length : 0
-    setWordCount(words)
-  }, [answer])
+    const words = answer.trim() ? answer.trim().split(/\s+/).length : 0;
+    setWordCount(words);
+  }, [answer]);
 
+  function disableCopyPaste(inputId: string): void {
+    const input = document.getElementById(inputId);
 
+    if (input) {
+      input.addEventListener("copy", (e: ClipboardEvent) => {
+        e.preventDefault();
+        console.log("Copy blocked");
+      });
+
+      input.addEventListener("paste", (e: ClipboardEvent) => {
+        e.preventDefault();
+        console.log("Paste blocked");
+      });
+
+      // Optional: block cut as well
+      input.addEventListener("cut", (e: ClipboardEvent) => {
+        e.preventDefault();
+        console.log("Cut blocked");
+      });
+    } else {
+      console.warn(`Element with id "${inputId}" not found.`);
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -46,7 +68,7 @@ export default function EssayQuestion({
             type="number"
             min="0"
             step="1"
-            value={essayScore ?? '0'}
+            value={essayScore ?? "0"}
             disabled
           />
         </div>
@@ -59,7 +81,10 @@ export default function EssayQuestion({
           placeholder="Write your essay here..."
           className="min-h-[200px]"
           value={answer}
-          onChange={(e) => onAnswerChange(e.target.value)}
+          onChange={(e) => {
+            onAnswerChange(e.target.value);
+            disableCopyPaste("essay-answer");
+          }}
         />
         <div className="text-sm text-muted-foreground text-right">
           Word count: {wordCount} / {question.expectedWordCount}
@@ -73,12 +98,10 @@ export default function EssayQuestion({
               <span className="text-green-500 ml-2">(Good length)</span>
             )}
           {wordCount > question.expectedWordCount * 1.2 && (
-            <span className="text-amber-500 ml-2">
-              (Consider being more concise)
-            </span>
+            <span className="text-amber-500 ml-2">(Consider being more concise)</span>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }

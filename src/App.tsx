@@ -52,19 +52,15 @@ function AppContent() {
       if (mainElement !== null) {
         mainElement.setAttribute("user", "student");
 
-        const el1 = document.querySelector('main[user="student"]');
-        const el2 = document.querySelector('div[role="dialog"]');
+        const el = document.querySelector("textarea");
 
-        const targets = [el1, el2].filter((el): el is Element => el !== null);
-        preventInteraction(targets);
+        preventInteraction(el);
 
-        function preventInteraction(targets: Element | Element[]) {
-          const elements = Array.isArray(targets) ? targets : [targets];
+        function preventInteraction(target: Element | null) {
+          if (!target) return;
 
-          elements.forEach((target) => {
-            ["contextmenu", "copy", "cut", "paste", "selectstart"].forEach((eventType) => {
-              target.addEventListener(eventType, (e) => e.preventDefault());
-            });
+          ["contextmenu", "copy", "cut", "paste"].forEach((eventType) => {
+            target.addEventListener(eventType, (e) => e.preventDefault());
           });
         }
       }
