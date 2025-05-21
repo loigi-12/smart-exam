@@ -25,10 +25,10 @@ import { setupEventLogging, subscribeToLogs } from "./lib/logs";
 interface LogEntry {
   event: string;
   timestamp: string;
-  userAgent: string;
   visibilityState: string;
   hiddenDuration?: string;
   openTabs?: number;
+  [key: string]: any;
 }
 
 function AppContent() {
@@ -37,11 +37,18 @@ function AppContent() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
 
   useEffect(() => {
-    setupEventLogging();
-    subscribeToLogs(setLogs);
-  }, []);
+    if (user && user.role === "student") {
+      const userPayload = {
+        user: {
+          userId: user.documentId,
+          userName: user.name,
+        },
+      };
 
-  console.log("logs", logs);
+      setupEventLogging(userPayload);
+      subscribeToLogs(setLogs);
+    }
+  }, []);
 
   return (
     <>

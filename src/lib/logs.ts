@@ -1,4 +1,3 @@
-// lib/logEvent.ts
 import { ref, push, set, onValue } from "firebase/database";
 import { database } from "@/lib/firebase";
 
@@ -19,62 +18,72 @@ function formatDuration(ms: number): string {
   return parts.join(" ");
 }
 
+function debounce(fn: (...args: any[]) => void, delay: number) {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  return (...args: any[]) => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), delay);
+  };
+}
+
 // Log events to Firebase
 export function logEvent(eventType: string, extraData: Record<string, any> = {}) {
   const eventsRef = ref(database, "logs");
   const newEventRef = push(eventsRef);
 
+  const openTabs = Object.keys(localStorage).filter((key) => key.startsWith("tab_")).length;
+
   const payload = {
     event: eventType,
     timestamp: new Date().toISOString(),
-    userAgent: navigator.userAgent,
     visibilityState: document.visibilityState,
+    openTabs,
     ...extraData,
   };
 
   set(newEventRef, payload).catch(console.error);
 }
 
-// Count open tabs and store in Firebase
-function updateOpenTabs() {
-  const openTabsRef = ref(database, "openTabs/count");
-
-  // Use localStorage to simulate tab tracking
+// Track open tabs in localStorage
+function trackTabLifecycle() {
   const tabKey = `tab_${Math.random().toString(36).substr(2, 9)}`;
   localStorage.setItem(tabKey, "open");
 
   window.addEventListener("beforeunload", () => {
     localStorage.removeItem(tabKey);
-    set(openTabsRef, document.querySelectorAll("iframe").length);
   });
-
-  const openCount = Object.keys(localStorage).filter((key) => key.startsWith("tab_")).length;
-  set(openTabsRef, openCount);
 }
 
-// Monitor tab visibility and log with duration + tab count
-export function setupEventLogging() {
-  updateOpenTabs();
+// Monitor tab visibility and log events with tab count and hidden duration
+let lastVisibilityState: string | null = null;
+
+export function setupEventLogging(userPayload: Record<string, any> = {}) {
+  trackTabLifecycle();
 
   window.addEventListener("load", () => {
-    logEvent("tab_opened");
+    logEvent("tab_opened", userPayload);
   });
 
   document.addEventListener("visibilitychange", () => {
-    const openTabs = Object.keys(localStorage).filter((key) => key.startsWith("tab_")).length;
+    const currentState = document.visibilityState;
 
-    if (document.visibilityState === "hidden") {
+    // Prevent duplicate logging for same state
+    if (currentState === lastVisibilityState) return;
+
+    lastVisibilityState = currentState;
+
+    if (currentState === "hidden") {
       hiddenAt = Date.now();
-      logEvent("tab_hidden", { openTabs });
-    } else if (document.visibilityState === "visible") {
+      logEvent("tab_hidden", userPayload);
+    } else if (currentState === "visible") {
       const hiddenDuration = hiddenAt ? formatDuration(Date.now() - hiddenAt) : undefined;
-      logEvent("tab_visible", { hiddenDuration, openTabs });
+      logEvent("tab_visible", { ...userPayload, hiddenDuration });
       hiddenAt = null;
     }
   });
 }
 
-// Listen to log updates in real-time
+// Subscribe to real-time updates
 export function subscribeToLogs(callback: (logs: any[]) => void) {
   const logsRef = ref(database, "logs");
   onValue(logsRef, (snapshot) => {
@@ -84,6 +93,6 @@ export function subscribeToLogs(callback: (logs: any[]) => void) {
       return;
     }
     const logArray = Object.values(data);
-    callback(logArray.reverse()); // newest first
+    callback(logArray.reverse());
   });
 }
