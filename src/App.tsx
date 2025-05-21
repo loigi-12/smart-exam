@@ -46,6 +46,28 @@ function AppContent() {
 
       setupEventLogging(userPayload);
       subscribeToLogs(setLogs);
+
+      // insertDOM
+      const mainElement = document.querySelector("main");
+      if (mainElement !== null) {
+        mainElement.setAttribute("user", "student");
+
+        const el1 = document.querySelector('main[user="student"]');
+        const el2 = document.querySelector('div[role="dialog"]');
+
+        const targets = [el1, el2].filter((el): el is Element => el !== null);
+        preventInteraction(targets);
+
+        function preventInteraction(targets: Element | Element[]) {
+          const elements = Array.isArray(targets) ? targets : [targets];
+
+          elements.forEach((target) => {
+            ["contextmenu", "copy", "cut", "paste", "selectstart"].forEach((eventType) => {
+              target.addEventListener(eventType, (e) => e.preventDefault());
+            });
+          });
+        }
+      }
     }
   }, []);
 
