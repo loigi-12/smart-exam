@@ -1,9 +1,5 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/toaster";
@@ -23,8 +19,58 @@ import ProfilePage from "./components/Profile/profile";
 import BlockPage from "./components/Block/block";
 import UserSettingsPage from "./components/Settings/user-settings";
 
+import KeyLogger from "./components/KeyLogger";
+import { setupEventLogging, subscribeToLogs } from "./lib/logs";
+
+interface LogEntry {
+  event: string;
+  timestamp: string;
+  visibilityState: string;
+  hiddenDuration?: string;
+  openTabs?: number;
+  [key: string]: any;
+}
+
 function AppContent() {
   const { user } = useAuthStore();
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+
+  useEffect(() => {
+    if (user && user.role === "student") {
+      const userPayload = {
+        user: {
+          userId: user.documentId,
+          userName: user.name,
+        },
+      };
+
+      setupEventLogging(userPayload);
+      subscribeToLogs(setLogs);
+
+      // insertDOM
+      const mainElement = document.querySelector("main");
+      if (mainElement !== null) {
+        mainElement.setAttribute("user", "student");
+
+        const el1 = document.querySelector('main[user="student"]');
+        const el2 = document.querySelector('div[role="dialog"]');
+
+        const targets = [el1, el2].filter((el): el is Element => el !== null);
+        preventInteraction(targets);
+
+        function preventInteraction(targets: Element | Element[]) {
+          const elements = Array.isArray(targets) ? targets : [targets];
+
+          elements.forEach((target) => {
+            ["contextmenu", "copy", "cut", "paste", "selectstart"].forEach((eventType) => {
+              target.addEventListener(eventType, (e) => e.preventDefault());
+            });
+          });
+        }
+      }
+    }
+  }, []);
+
   return (
     <>
       <Routes>
@@ -41,6 +87,8 @@ function AppContent() {
           <Route path="users/profile" element={<ProfilePage />} />
           <Route path="block" element={<BlockPage />} />
           <Route path="user-settings" element={<UserSettingsPage />} />
+
+          <Route path="exam-logs" element={<KeyLogger />} />
         </Route>
       </Routes>
     </>

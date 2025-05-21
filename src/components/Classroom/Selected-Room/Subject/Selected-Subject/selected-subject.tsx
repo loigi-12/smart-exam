@@ -11,6 +11,7 @@ import { Subject } from "@/types/subject";
 import { Classroom } from "@/types/classroom";
 import StudentTab from "../../Student/student";
 import { useAuthStore } from "@/store/authStore";
+import KeyLogger from "@/components/KeyLogger";
 
 export default function SelectedSubjectInRoom() {
   const user = useAuthStore((state) => state.user) || {};
@@ -100,8 +101,8 @@ export default function SelectedSubjectInRoom() {
               <TabsList className="flex">
                 <TabsTrigger value="exam">Exam</TabsTrigger>
                 {user.role !== "student" && <TabsTrigger value="student">Student</TabsTrigger>}
-
                 <TabsTrigger value="grade">Grade</TabsTrigger>
+                {user?.role == "professor" && <TabsTrigger value="logs">Logs</TabsTrigger>}
               </TabsList>
             </Tabs>
           </div>
@@ -111,6 +112,7 @@ export default function SelectedSubjectInRoom() {
           {selectedTab === "student" && <StudentTab subject={subject} classroom={classroom} />}
           {selectedTab === "exam" && <ExamTab id={id} subject={subject} classroom={classroom} />}
           {selectedTab === "grade" && <GradeTab subject={subject} classroom={classroom} />}
+          {selectedTab === "logs" && <KeyLogger />}
         </div>
       </Card>
     </div>

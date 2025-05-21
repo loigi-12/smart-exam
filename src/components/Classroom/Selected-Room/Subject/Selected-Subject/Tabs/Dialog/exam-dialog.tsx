@@ -113,7 +113,10 @@ export default function ExamViewDialog({
                 <div className="mt-2">
                   <Badge>
                     <p>
-                      Rating: {aiFeedback?.rating || "Not available"} out of {question.essayScore}
+                      Rating:{" "}
+                      {Math.round((aiFeedback?.rating / 10) * question.essayScore) ||
+                        "Not available"}{" "}
+                      out of {question.essayScore}
                     </p>
                   </Badge>
                   <p>Comment: {aiFeedback?.comment || "No comment available"}</p>
