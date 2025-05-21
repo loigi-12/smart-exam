@@ -8,13 +8,13 @@ const openai = new OpenAI({
 export async function getEssayFeedback(question: string, answer: string) {
   const prompt = `You are a teacher. Rate the following essay answer from 1 (poor) to 10 (excellent).
 
-Question: ${question}
+  Question: ${question}
 
-Answer: ${answer}
+  Answer: ${answer}
 
-Respond in this format:
-Rating: <number>
-Comment: <short explanation>`;
+  Respond in this format:
+  Rating: <number>
+  Comment: <short explanation>`;
 
   // create and send request to OPEN AI
   const completion = await openai.chat.completions.create({
@@ -24,6 +24,8 @@ Comment: <short explanation>`;
   });
 
   const responseText = completion.choices[0].message.content ?? "";
+
+  console.log("responseText", responseText);
 
   const ratingMatch = responseText.match(/Rating:\s*(\d+)/i);
   const commentMatch = responseText.match(/Comment:\s*(.+)/i);

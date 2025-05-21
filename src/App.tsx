@@ -33,7 +33,6 @@ interface LogEntry {
 
 function AppContent() {
   const { user } = useAuthStore();
-
   const [logs, setLogs] = useState<LogEntry[]>([]);
 
   useEffect(() => {
