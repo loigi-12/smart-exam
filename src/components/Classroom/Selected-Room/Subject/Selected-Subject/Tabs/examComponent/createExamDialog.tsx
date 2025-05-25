@@ -11,11 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { CalendarIcon, Plus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -51,12 +47,7 @@ interface ExamDialogProps {
   examId?: string;
 }
 
-export default function ExamDialog({
-  open,
-  onOpenChange,
-  subject,
-  examId,
-}: ExamDialogProps) {
+export default function ExamDialog({ open, onOpenChange, subject, examId }: ExamDialogProps) {
   const [examName, setExamName] = useState("");
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
@@ -119,17 +110,11 @@ export default function ExamDialog({
     setQuestions(questions.map((q) => (q.id === id ? { ...q, ...data } : q)));
   };
 
-  const updateOption = (
-    questionId: string,
-    optionIndex: number,
-    value: string
-  ) => {
+  const updateOption = (questionId: string, optionIndex: number, value: string) => {
     setQuestions(
       questions.map((q) => {
         if (q.id === questionId) {
-          const newOptions = Array.isArray(q.options)
-            ? [...q.options]
-            : ["", "", "", ""];
+          const newOptions = Array.isArray(q.options) ? [...q.options] : ["", "", "", ""];
           newOptions[optionIndex] = value;
           return { ...q, options: newOptions };
         }
@@ -139,9 +124,7 @@ export default function ExamDialog({
   };
   const saveExam = async () => {
     if (!examName.trim() || !startDate || !dueDate) {
-      alert(
-        "Please fill in the exam name and select both start and due dates."
-      );
+      alert("Please fill in the exam name and select both start and due dates.");
       return;
     }
 
@@ -172,8 +155,7 @@ export default function ExamDialog({
     const isValid = questions.every((q) => {
       const isTextValid = q.text.trim() !== "";
       const areOptionsValid =
-        q.type !== "multiple-choice" ||
-        (q.options?.every((opt) => opt.trim() !== "") && q.answer);
+        q.type !== "multiple-choice" || (q.options?.every((opt) => opt.trim() !== "") && q.answer);
       const isIdentificationValid =
         q.type !== "identification" || (q.answer && q.answer.trim() !== "");
 
@@ -194,24 +176,24 @@ export default function ExamDialog({
       subjectId: subject.id,
       questions: questions.map((q) => {
         const questionData: any = { ...q };
-      
+
         if (q.type !== "multiple-choice") {
           delete questionData.options;
         }
-      
+
         if (
           (q.type === "essay" || q.type === "multiple-choice") &&
           (q.answer === undefined || q.answer === "")
         ) {
           delete questionData.answer;
         }
-      
+
         if (q.type !== "essay") {
           delete questionData.essayScore;
         } else if (q.essayScore === undefined || q.essayScore === null) {
           delete questionData.essayScore;
         }
-      
+
         return questionData;
       }),
     };
@@ -227,9 +209,7 @@ export default function ExamDialog({
       }
 
       toast({
-        title: examId
-          ? "Exam updated successfully!"
-          : "Exam created successfully!",
+        title: examId ? "Exam updated successfully!" : "Exam created successfully!",
         description: "Your exam has been saved.",
         duration: 3000,
       });
@@ -335,19 +315,10 @@ export default function ExamDialog({
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={dueDate}
-                    onSelect={setDueDate}
-                    initialFocus
-                  />
+                  <Calendar mode="single" selected={dueDate} onSelect={setDueDate} initialFocus />
                 </PopoverContent>
               </Popover>
-              <TimePicker
-                value={dueTime}
-                onChange={setDueTime}
-                placeholder="Select due time"
-              />
+              <TimePicker value={dueTime} onChange={setDueTime} placeholder="Select due time" />
             </div>
           </div>
 
@@ -365,16 +336,12 @@ export default function ExamDialog({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium">Questions</h3>
-              <Select
-                onValueChange={(value) => addQuestion(value as QuestionType)}
-              >
+              <Select onValueChange={(value) => addQuestion(value as QuestionType)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Add Question" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="multiple-choice">
-                    Multiple Choice
-                  </SelectItem>
+                  <SelectItem value="multiple-choice">Multiple Choice</SelectItem>
                   <SelectItem value="identification">Identification</SelectItem>
                   <SelectItem value="essay">Essay</SelectItem>
                 </SelectContent>
@@ -408,10 +375,7 @@ export default function ExamDialog({
                         onValueChange={(value) =>
                           updateQuestion(question.id, {
                             type: value as QuestionType,
-                            options:
-                              value === "multiple-choice"
-                                ? ["", "", "", ""]
-                                : undefined,
+                            options: value === "multiple-choice" ? ["", "", "", ""] : undefined,
                           })
                         }
                       >
@@ -419,36 +383,26 @@ export default function ExamDialog({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="multiple-choice">
-                            Multiple Choice
-                          </SelectItem>
-                          <SelectItem value="identification">
-                            Identification
-                          </SelectItem>
+                          <SelectItem value="multiple-choice">Multiple Choice</SelectItem>
+                          <SelectItem value="identification">Identification</SelectItem>
                           <SelectItem value="essay">Essay</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor={`question-${question.id}`}>
-                        Question
-                      </Label>
+                      <Label htmlFor={`question-${question.id}`}>Question</Label>
                       <Textarea
                         id={`question-${question.id}`}
                         placeholder="Enter your question here..."
                         value={question.text}
-                        onChange={(e) =>
-                          updateQuestion(question.id, { text: e.target.value })
-                        }
+                        onChange={(e) => updateQuestion(question.id, { text: e.target.value })}
                       />
                     </div>
 
                     {question.type === "essay" && (
                       <div className="grid gap-2">
-                        <Label htmlFor={`essayScore-${question.id}`}>
-                          Essay Score
-                        </Label>
+                        <Label htmlFor={`essayScore-${question.id}`}>Essay Score</Label>
                         <Input
                           type="number"
                           id={`essayScore-${question.id}`}
@@ -467,32 +421,19 @@ export default function ExamDialog({
                       <div className="space-y-3">
                         <Label>Options</Label>
                         {question.options?.map((option, optIndex) => (
-                          <div
-                            key={optIndex}
-                            className="flex items-center gap-2"
-                          >
+                          <div key={optIndex} className="flex items-center gap-2">
                             <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
                               {String.fromCharCode(65 + optIndex)}
                             </div>
                             <Input
-                              placeholder={`Option ${String.fromCharCode(
-                                65 + optIndex
-                              )}`}
+                              placeholder={`Option ${String.fromCharCode(65 + optIndex)}`}
                               value={option}
-                              onChange={(e) =>
-                                updateOption(
-                                  question.id,
-                                  optIndex,
-                                  e.target.value
-                                )
-                              }
+                              onChange={(e) => updateOption(question.id, optIndex, e.target.value)}
                             />
                           </div>
                         ))}
                         <div className="grid gap-2">
-                          <Label htmlFor={`answer-${question.id}`}>
-                            Correct Answer
-                          </Label>
+                          <Label htmlFor={`answer-${question.id}`}>Correct Answer</Label>
                           <Select
                             onValueChange={(value) =>
                               updateQuestion(question.id, { answer: value })
@@ -519,9 +460,7 @@ export default function ExamDialog({
 
                     {question.type === "identification" && (
                       <div className="grid gap-2">
-                        <Label htmlFor={`answer-${question.id}`}>
-                          Correct Answer
-                        </Label>
+                        <Label htmlFor={`answer-${question.id}`}>Correct Answer</Label>
                         <Input
                           id={`answer-${question.id}`}
                           placeholder="Enter the correct answer"

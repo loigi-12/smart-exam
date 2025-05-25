@@ -86,7 +86,7 @@ export default function ExamViewDialog({
                   </div>
 
                   {String(option).toLowerCase() === String(question.answer).toLowerCase() && (
-                    <div className="text-zinc-500 text-xs">Correct answer</div>
+                    <div className="text-zinc-500 text-xs"></div>
                   )}
                 </Card>
               ))}
@@ -98,7 +98,7 @@ export default function ExamViewDialog({
           <div className="mt-2 relative">
             <div className="flex items-center border rounded-xl px-3 py-2">
               <span className="text-black dark:text-white flex-grow">{userAnswer}</span>
-              <span className="text-zinc-500 text-xs">Correct answer: {question.answer}</span>
+              <span className="text-zinc-500 text-xs"></span>
             </div>
           </div>
         );
