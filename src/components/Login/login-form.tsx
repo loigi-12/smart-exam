@@ -1,35 +1,29 @@
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { auth, database } from "@/lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { ref, get } from "firebase/database";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleGoogleSignIn = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
 
       const usersRef = ref(database, "users");
       const snapshot = await get(usersRef);
 
       if (snapshot.exists()) {
         const usersData = snapshot.val();
-
         const documentId = Object.keys(usersData).find(
           (key) => usersData[key].email === user.email
         );
@@ -44,18 +38,19 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             description: `Welcome back, ${userData.name}!`,
           });
 
-          setEmail("");
-          setPassword("");
           navigate("/main");
         } else {
-          console.log("No user data found");
+          toast({
+            title: "Error",
+            description: "No matching user data found in the database.",
+          });
         }
       }
     } catch (error) {
       console.error(error);
       toast({
         title: "Error",
-        description: "Invalid credentials or network issue.",
+        description: "Google sign-in failed.",
       });
     }
   };
@@ -64,40 +59,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
-                <p className="text-balance text-muted-foreground">Login to your account</p>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <Button type="submit" className="w-full text-white">
-                Login
-              </Button>
+          <div className="p-6 md:p-8 flex flex-col gap-6 justify-center">
+            <div className="flex flex-col items-center text-center">
+              <h1 className="text-2xl font-bold">Welcome back</h1>
+              <p className="text-balance text-muted-foreground">Sign in with your Google account</p>
             </div>
-          </form>
+            <Button onClick={handleGoogleSignIn} className="w-full text-white">
+              Sign in with Google
+            </Button>
+          </div>
           <div className="relative hidden bg-zinc-300 dark:bg-slate-200 md:block">
             <img
               src="/logo.png"
