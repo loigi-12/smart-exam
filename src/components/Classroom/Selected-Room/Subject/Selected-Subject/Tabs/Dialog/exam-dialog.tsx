@@ -14,6 +14,7 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Classroom } from "@/types/classroom";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/store/authStore";
 
 interface ExamViewDialogProps {
   selectedExam: {
@@ -35,6 +36,8 @@ export default function ExamViewDialog({
   isDialogOpen,
   setIsDialogOpen,
 }: ExamViewDialogProps) {
+  const { user } = useAuthStore();
+
   const [questions, setQuestions] = useState<any[]>([]);
   const [feedback, setFeedback] = useState<string | null>(null);
 
@@ -86,7 +89,9 @@ export default function ExamViewDialog({
                   </div>
 
                   {String(option).toLowerCase() === String(question.answer).toLowerCase() && (
-                    <div className="text-zinc-500 text-xs">Correct answer</div>
+                    <div className="text-zinc-500 text-xs">
+                      {user.role === "professor" ? "Correct Answwer" : ""}
+                    </div>
                   )}
                 </Card>
               ))}
@@ -98,7 +103,9 @@ export default function ExamViewDialog({
           <div className="mt-2 relative">
             <div className="flex items-center border rounded-xl px-3 py-2">
               <span className="text-black dark:text-white flex-grow">{userAnswer}</span>
-              <span className="text-zinc-500 text-xs">Correct answer: {question.answer}</span>
+              <span className="text-zinc-500 text-xs">
+                {user.role === "professor" ? `Correct answer: ${question.answer}` : ""}{" "}
+              </span>
             </div>
           </div>
         );
