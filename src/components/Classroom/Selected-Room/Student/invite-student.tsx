@@ -19,9 +19,7 @@ interface InviteStudentDialogProps {
   classroom: Classroom | null;
 }
 
-export default function InviteStudentDialog({
-  classroom,
-}: InviteStudentDialogProps) {
+export default function InviteStudentDialog({ classroom }: InviteStudentDialogProps) {
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -53,9 +51,7 @@ export default function InviteStudentDialog({
       <DialogContent className="w-full sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Invite Student</DialogTitle>
-          <DialogDescription>
-            Invite a student in this subject
-          </DialogDescription>
+          <DialogDescription>Invite a student in this subject</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">

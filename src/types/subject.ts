@@ -5,4 +5,7 @@ export interface Subject {
   department: string;
   block: string;
   classroomId?: string[];
+  createdBy: string;
+  inviteCode: string;
+  [key: string]: any;
 }

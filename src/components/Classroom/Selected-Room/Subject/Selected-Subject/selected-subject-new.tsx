@@ -31,8 +31,6 @@ export default function SelectedSubjectInRoomNew() {
         const subjectData = { id, ...subjectSnapshot.val() } as Subject;
         setSubject(subjectData);
 
-        console.log("subjectssss", subject);
-
         const classroomId = subjectData.classroomId;
         if (!classroomId) {
           console.error("Classroom ID not found in subject data");

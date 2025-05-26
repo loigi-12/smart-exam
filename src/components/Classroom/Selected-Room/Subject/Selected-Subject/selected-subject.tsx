@@ -68,9 +68,6 @@ export default function SelectedSubjectInRoom() {
     fetchSubjectAndClassroom();
   }, [id]);
 
-  console.log("subject", subject);
-  console.log("classroom", classroom);
-
   return (
     <div>
       <Card className="p-4">

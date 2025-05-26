@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store/authStore";
 import { AddStudentsDialog } from "./add-students";
 // import { AdminAddStudentsDialog } from "./admin-add-students";
 import { Subject } from "@/types/subject";
+import InviteStudentDialogNew from "./invite-student-new";
 
 interface StudentTabProps {
   classroom: Classroom | null;
@@ -36,11 +37,12 @@ export default function StudentTab({ subject, classroom }: StudentTabProps) {
             </>
           )} */}
 
-          {/* {user.role === "professor" && (
+          {user.role === "professor" && (
             <>
-              <InviteStudentDialog classroom={classroom} />
+              {/* <InviteStudentDialog classroom={classroom} /> */}
+              <InviteStudentDialogNew subject={subject} />
             </>
-          )} */}
+          )}
 
           {user.role === "admin" && (
             <>

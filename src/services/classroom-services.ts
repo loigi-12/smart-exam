@@ -94,6 +94,13 @@ export const getClassSubjects = async () => {
   return [];
 };
 
+export const addInviteCode = async (subjectId: string, code: string) => {
+  const classRef = ref(database, `subjects/${subjectId}`);
+  await update(classRef, {
+    inviteCode: code,
+  });
+};
+
 export const StudentJoinClassroom = async (inviteCode: string, studentId: string) => {
   const classroomsRef = ref(database, "classrooms");
   const userRef = ref(database, `users/${studentId}`);
