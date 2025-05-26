@@ -22,6 +22,8 @@ export default function SelectedSubjectInRoom() {
   const [selectedTab, setSelectedTab] = useState("exam");
   // const [createdByName, setCreatedByName] = useState<string | null>(null);
 
+  console.log("classroom", classroom);
+
   useEffect(() => {
     const fetchSubjectAndClassroom = async () => {
       const subjectRef = ref(database, `subjects/${id}`);

@@ -3,11 +3,10 @@ import { Link } from "react-router-dom";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import CreateClassroom from "./Dialog/create-classroom";
-import { getClassrooms, getClassSubjects } from "@/services/classroom-services";
+import { getClassrooms, getClassSubjects, getStudentSubjects } from "@/services/classroom-services";
 import { useAuthStore } from "@/store/authStore";
 import JoinClassroom from "./Dialog/join-classroom";
 import { FetchUserClassrooms } from "@/services/user-services";
-import CreateSubject from "../Subject/Dialog/create-subject";
 import CreateClass from "../Subject/Dialog/create-class";
 import { get, ref } from "firebase/database";
 import { database } from "@/lib/firebase";
@@ -17,8 +16,8 @@ export default function ClassroomPage() {
   const [classrooms, setClassrooms] = useState<any[]>([]);
   const [userClassrooms, setUserClassrooms] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-
   const [classSubjects, setClassSubjects] = useState<any[]>([]);
+  const [studentSubjects, setStudentSubjects] = useState<any[]>([]);
 
   const fetchClassSubjects = async () => {
     const subjectIds = await getClassSubjects();
@@ -31,19 +30,35 @@ export default function ClassroomPage() {
       });
 
       const subjects = await Promise.all(subjectPromises);
-      const filteredSubjects = subjects.filter(
-        (s) => s !== null && s.createdBy === user.documentId
-      ) as any[];
-      setClassSubjects(filteredSubjects);
+
+      setClassSubjects(subjects);
     }
   };
+
+  const fetchStudentSubjects = async () => {
+    if (user.role === "student") {
+      const subjects = await getStudentSubjects(user.documentId);
+      setStudentSubjects(subjects);
+    }
+  };
+  useEffect(() => {
+    fetchStudentSubjects();
+  }, []);
 
   useEffect(() => {
     fetchClassSubjects();
   }, []);
 
-  const handleCreateClassroom = async (_classroomName: string, _department: string) => {};
+  const profSubjects = classSubjects.filter(
+    (s) => s !== null && s.createdBy === user.documentId
+  ) as any[];
 
+  const studentSubjectIds = studentSubjects.map((s) => s);
+  const _studentSubjects = classSubjects.filter((s) => s && studentSubjectIds.includes(s.id));
+
+  const mySubjects = user.role === "professor" ? profSubjects : _studentSubjects;
+
+  const handleCreateClassroom = async (_classroomName: string, _department: string) => {};
   const handleCreateSubject = async (
     _subjectCode: string,
     _subjectName: string,
@@ -73,6 +88,8 @@ export default function ClassroomPage() {
     }
     return false;
   });
+
+  console.log("user", user);
 
   return (
     <div className="p-2">
@@ -120,7 +137,7 @@ export default function ClassroomPage() {
             )} */}
 
             {classSubjects &&
-              classSubjects.map((subject) => (
+              mySubjects.map((subject) => (
                 <Link
                   key={subject.id}
                   to={`/main/classroom/${subject.id}/`}

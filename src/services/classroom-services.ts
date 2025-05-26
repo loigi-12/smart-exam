@@ -89,7 +89,17 @@ export const getClassSubjects = async () => {
   const snapshot = await get(classroomRef);
   if (snapshot.exists()) {
     const data = snapshot.val();
-    return Object.keys(data); // returns ['id1', 'id2', ...]
+    return Object.keys(data);
+  }
+  return [];
+};
+
+export const getStudentSubjects = async (studentId: string) => {
+  const studentSubjectsRef = ref(database, `users/${studentId}/subjects`);
+  const snapshot = await get(studentSubjectsRef);
+  if (snapshot.exists()) {
+    const data = snapshot.val();
+    return data;
   }
   return [];
 };
@@ -157,6 +167,65 @@ export const StudentJoinClassroom = async (inviteCode: string, studentId: string
       });
 
       return { success: true, classroomId };
+    }
+
+    return { success: false, message: "Invalid invite code." };
+  } catch (error) {
+    console.error("Error joining classroom:", error);
+    return { success: false, message: "Failed to join the classroom." };
+  }
+};
+
+export const StudentJoinClass = async (inviteCode: string, studentId: string) => {
+  const classRef = ref(database, "subjects");
+  const userRef = ref(database, `users/${studentId}`);
+
+  if (!studentId) {
+    console.error("Error: studentId is undefined");
+    return { success: false, message: "Invalid user ID." };
+  }
+
+  try {
+    const snapshot = await get(classRef);
+    if (snapshot.exists()) {
+      let classId: string | null = null;
+      let students: string[] = [];
+
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        if (data.inviteCode === inviteCode) {
+          classId = childSnapshot.key;
+          students = data.students || [];
+        }
+      });
+
+      if (!classId) {
+        return { success: false, message: "Invalid invite code." };
+      }
+
+      const userSnapshot = await get(userRef);
+      if (!userSnapshot.exists()) {
+        return { success: false, message: "User not found." };
+      }
+
+      const userData = userSnapshot.val();
+      const userClassSubject = userData.subjects || [];
+
+      if (students.includes(studentId)) {
+        return { success: false, message: "You have already joined this class." };
+      }
+
+      if (userClassSubject.includes(classId)) {
+        return { success: false, message: "Class already added to user." };
+      }
+
+      const updatedUserClass = [...userClassSubject, classId];
+
+      await update(userRef, {
+        subjects: updatedUserClass,
+      });
+
+      return { success: true, classId };
     }
 
     return { success: false, message: "Invalid invite code." };

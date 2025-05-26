@@ -19,7 +19,11 @@ import { CirclePlus, Text } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { checkIfSubjectExists, createSubject } from "@/services/subject-services";
+import {
+  // addSubjectToProfessor,
+  checkIfSubjectExists,
+  createSubject,
+} from "@/services/subject-services";
 import { getDepartments } from "@/services/department-services";
 import { useAuthStore } from "@/store/authStore";
 
@@ -65,6 +69,7 @@ export default function CreateClass({ onCreate }: CreateSubjectProps) {
       }
 
       await createSubject(subjectName, subjectCode, department, user.documentId);
+      // await addSubjectToProfessor()
       toast({
         title: "Success",
         description: "Successfully class subject",

@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/authStore";
-import { StudentJoinClassroom } from "@/services/classroom-services";
+import { StudentJoinClass, StudentJoinClassroom } from "@/services/classroom-services";
 
 export default function JoinClassroom() {
   const { toast } = useToast();
@@ -30,7 +30,7 @@ export default function JoinClassroom() {
     }
 
     try {
-      const result = await StudentJoinClassroom(inviteCode, user?.documentId);
+      const result = await StudentJoinClass(inviteCode, user?.documentId);
 
       if (result.success) {
         toast({
@@ -63,9 +63,7 @@ export default function JoinClassroom() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Join Classroom</DialogTitle>
-          <DialogDescription>
-            Join classroom to start learning
-          </DialogDescription>
+          <DialogDescription>Join classroom to start learning</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
