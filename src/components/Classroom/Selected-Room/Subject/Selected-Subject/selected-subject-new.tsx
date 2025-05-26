@@ -13,16 +13,14 @@ import StudentTab from "../../Student/student";
 import { useAuthStore } from "@/store/authStore";
 import KeyLogger from "@/components/KeyLogger";
 
-export default function SelectedSubjectInRoom() {
+export default function SelectedSubjectInRoomNew() {
   const user = useAuthStore((state) => state.user) || {};
 
   const { id } = useParams();
   const [subject, setSubject] = useState<Subject | null>(null);
-  const [classroom, setClassroom] = useState<Classroom | null>(null);
+  const [classroom] = useState<Classroom | null>(null);
   const [selectedTab, setSelectedTab] = useState("exam");
-  // const [createdByName, setCreatedByName] = useState<string | null>(null);
-
-  console.log("classroom", classroom);
+  const [createdByName, setCreatedByName] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSubjectAndClassroom = async () => {
@@ -33,34 +31,53 @@ export default function SelectedSubjectInRoom() {
         const subjectData = { id, ...subjectSnapshot.val() } as Subject;
         setSubject(subjectData);
 
-        const classroomId = subjectData.classroomId;
-        if (!classroomId) {
-          console.error("Classroom ID not found in subject data");
-          return;
-        }
+        console.log("subjectData", subjectData);
+        console.log("subjectData.id", subjectData.id);
 
-        const targetClassroomId = Array.isArray(classroomId) ? classroomId[0] : classroomId;
+        // const classroomId = subjectData.id;
+        // if (!classroomId) {
+        //   console.error("Classroom ID not found in subject data");
+        //   return;
+        // }
 
-        const classroomRef = ref(database, `classrooms/${targetClassroomId}`);
-        const classroomSnapshot = await get(classroomRef);
+        // const targetClassroomId = Array.isArray(classroomId) ? classroomId[0] : classroomId;
 
-        if (classroomSnapshot.exists()) {
-          const classroomData = {
-            id: classroomId,
-            ...classroomSnapshot.val(),
-          } as Classroom;
-          setClassroom(classroomData);
+        // const classroomRef = ref(database, `classrooms/${targetClassroomId}`);
+        // const classroomSnapshot = await get(classroomRef);
 
-          // const userRef = ref(database, `users/${classroomData.createdBy}`);
-          // const userSnapshot = await get(userRef);
-          // if (userSnapshot.exists()) {
-          //   const userData = userSnapshot.val();
-          //   setCreatedByName(userData.name);
-          // } else {
-          //   console.error(`User not found for ID: ${classroomData.createdBy}`);
-          // }
+        // if (classroomSnapshot.exists()) {
+        //   const classroomData = {
+        //     id: classroomId,
+        //     ...classroomSnapshot.val(),
+        //   } as Classroom;
+        //   setClassroom(classroomData);
+
+        //   const userRef = ref(database, `users/${classroomData.createdBy}`);
+        //   const userSnapshot = await get(userRef);
+        //   if (userSnapshot.exists()) {
+        //     const userData = userSnapshot.val();
+        //     setCreatedByName(userData.name);
+        //   } else {
+        //     console.error(`User not found for ID: ${classroomData.createdBy}`);
+        //   }
+        // } else {
+        //   console.error(`Classroom not found for ID: ${classroomId}`);
+        // }
+
+        const profId = subjectData.createdBy;
+
+        const usersRef = ref(database, `users/${profId}`);
+        const _professorSnapshot = await get(usersRef);
+
+        if (_professorSnapshot.exists()) {
+          const _professorData = {
+            id: profId,
+            ..._professorSnapshot.val(),
+          } as Subject;
+
+          setCreatedByName(_professorData.name);
         } else {
-          console.error(`Classroom not found for ID: ${classroomId}`);
+          console.error(`Classroom not found for ID:`);
         }
       } else {
         console.error("Subject not found");
@@ -92,12 +109,12 @@ export default function SelectedSubjectInRoom() {
               {subject ? subject.department : "Loading..."}
             </Badge>
           </div>
-          {/* <div className="mb-4 flex items-center">
+          <div className="mb-4 flex items-center">
             <p className="text-sm">Professor:</p>
             <Badge variant="outline" className="ml-1">
               {createdByName ? createdByName : "Loading..."}
             </Badge>
-          </div> */}
+          </div>
           <div>
             <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mb-5">
               <TabsList className="flex">

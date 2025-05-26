@@ -15,7 +15,9 @@ export default function HeaderProfessor() {
   useEffect(() => {
     if (user?.documentId) {
       const unsubscribeClassrooms = getClassroomsByProfessor(user.documentId, (data) => {
+        console.log("data", data);
         setClassroomCount(data.classroomCount);
+
         // setStudentCount(data.studentCount);
       });
 

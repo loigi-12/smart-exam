@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-// import InviteStudentDialog from './invite-student'
+// import InviteStudentDialog from "./invite-student";
 import { Classroom } from "@/types/classroom";
 import StudentTableList from "./student-table";
 import { useAuthStore } from "@/store/authStore";
 import { AddStudentsDialog } from "./add-students";
-// import { AdminAddStudentsDialog } from './admin-add-students'
+// import { AdminAddStudentsDialog } from "./admin-add-students";
 import { Subject } from "@/types/subject";
+import InviteStudentDialogNew from "./invite-student-new";
 
 interface StudentTabProps {
   classroom: Classroom | null;
@@ -35,6 +36,13 @@ export default function StudentTab({ subject, classroom }: StudentTabProps) {
               <InviteStudentDialog classroom={classroom} />
             </>
           )} */}
+
+          {user.role === "professor" && (
+            <>
+              {/* <InviteStudentDialog classroom={classroom} /> */}
+              <InviteStudentDialogNew subject={subject} />
+            </>
+          )}
 
           {user.role === "admin" && (
             <>

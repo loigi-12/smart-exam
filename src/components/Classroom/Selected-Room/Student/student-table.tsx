@@ -12,7 +12,6 @@ import { Student } from "@/types/students";
 import { fetchStudentData } from "@/services/user-services";
 import { useNavigate } from "react-router-dom";
 import { Subject } from "@/types/subject";
-import TableFilter from "@/components/TableFilter";
 
 interface StudentTableListProps {
   // classroom: Classroom | null;
@@ -26,7 +25,7 @@ export default function StudentTableList({
   subject,
 }: StudentTableListProps) {
   const [students, setStudents] = useState<Student[]>([]);
-  const [selectedBlock, setSelectedBlock] = useState("");
+  const [selectedBlock] = useState("");
 
   const navigate = useNavigate();
 
@@ -66,12 +65,6 @@ export default function StudentTableList({
   //   ? filteredStudents.filter((s) => s.block.toString() === selectedBlock)
   //   : filteredStudents;
 
-  const uniqueBlocks = Array.from(
-    new Set(
-      filteredStudents.flatMap((s) => s.block ?? []) // flatten block arrays
-    )
-  );
-
   // const uniqueYears = Array.from(
   //   new Set(
   //     filteredStudents
@@ -87,15 +80,6 @@ export default function StudentTableList({
 
   return (
     <div>
-      <div className="flex items-center my-2 gap-3">
-        <h3>Filter</h3>
-
-        <TableFilter
-          label="Block"
-          data={uniqueBlocks}
-          onSelectFilter={(block) => setSelectedBlock(block)}
-        />
-      </div>
       <Table className="text-center cursor-pointer border-collapse border">
         <TableHeader>
           <TableRow>

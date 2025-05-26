@@ -1,11 +1,7 @@
 import { ref, set, push, get, onValue, update } from "firebase/database";
 import { database } from "@/lib/firebase";
 
-export const createClassroom = (
-  classroomName: string,
-  department: string,
-  userId: string
-) => {
+export const createClassroom = (classroomName: string, department: string, userId: string) => {
   const createdAt = new Date().toLocaleString("en-US", {
     year: "numeric",
     month: "2-digit",
@@ -32,9 +28,7 @@ export const checkIfClassroomExists = async (classroomName: string) => {
   if (snapshot.exists()) {
     const classrooms = snapshot.val();
 
-    return Object.values(classrooms).some(
-      (classroom: any) => classroom.name === classroomName
-    );
+    return Object.values(classrooms).some((classroom: any) => classroom.name === classroomName);
   }
 
   return false;
@@ -45,20 +39,18 @@ export const getClassrooms = (callback: (classrooms: any[]) => void) => {
   const unsubscribe = onValue(classroomsRef, (snapshot) => {
     if (snapshot.exists()) {
       const classroomData = snapshot.val();
-      const classroomArray = Object.entries(classroomData).map(
-        ([id, classroom]) => ({
-          id,
-          ...(classroom as Record<string, any>),
-        })
-      );
+      const classroomArray = Object.entries(classroomData).map(([id, classroom]) => ({
+        id,
+        ...(classroom as Record<string, any>),
+      }));
       callback(classroomArray);
     } else {
       callback([]);
     }
-  })
+  });
 
   return () => unsubscribe();
-}
+};
 
 export const updateClassroomSubjects = async (classroomId: string, subjectIds: number[]) => {
   const classroomRef = ref(database, `classrooms/${classroomId}`);
@@ -90,6 +82,33 @@ export const getClassroomSubjects = async (classroomId: string) => {
     return snapshot.val().subjects || [];
   }
   return [];
+};
+
+export const getClassSubjects = async () => {
+  const classroomRef = ref(database, `subjects`);
+  const snapshot = await get(classroomRef);
+  if (snapshot.exists()) {
+    const data = snapshot.val();
+    return Object.keys(data);
+  }
+  return [];
+};
+
+export const getStudentSubjects = async (studentId: string) => {
+  const studentSubjectsRef = ref(database, `users/${studentId}/subjects`);
+  const snapshot = await get(studentSubjectsRef);
+  if (snapshot.exists()) {
+    const data = snapshot.val();
+    return data;
+  }
+  return [];
+};
+
+export const addInviteCode = async (subjectId: string, code: string) => {
+  const classRef = ref(database, `subjects/${subjectId}`);
+  await update(classRef, {
+    inviteCode: code,
+  });
 };
 
 export const StudentJoinClassroom = async (inviteCode: string, studentId: string) => {
@@ -148,6 +167,65 @@ export const StudentJoinClassroom = async (inviteCode: string, studentId: string
       });
 
       return { success: true, classroomId };
+    }
+
+    return { success: false, message: "Invalid invite code." };
+  } catch (error) {
+    console.error("Error joining classroom:", error);
+    return { success: false, message: "Failed to join the classroom." };
+  }
+};
+
+export const StudentJoinClass = async (inviteCode: string, studentId: string) => {
+  const classRef = ref(database, "subjects");
+  const userRef = ref(database, `users/${studentId}`);
+
+  if (!studentId) {
+    console.error("Error: studentId is undefined");
+    return { success: false, message: "Invalid user ID." };
+  }
+
+  try {
+    const snapshot = await get(classRef);
+    if (snapshot.exists()) {
+      let classId: string | null = null;
+      let students: string[] = [];
+
+      snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        if (data.inviteCode === inviteCode) {
+          classId = childSnapshot.key;
+          students = data.students || [];
+        }
+      });
+
+      if (!classId) {
+        return { success: false, message: "Invalid invite code." };
+      }
+
+      const userSnapshot = await get(userRef);
+      if (!userSnapshot.exists()) {
+        return { success: false, message: "User not found." };
+      }
+
+      const userData = userSnapshot.val();
+      const userClassSubject = userData.subjects || [];
+
+      if (students.includes(studentId)) {
+        return { success: false, message: "You have already joined this class." };
+      }
+
+      if (userClassSubject.includes(classId)) {
+        return { success: false, message: "Class already added to user." };
+      }
+
+      const updatedUserClass = [...userClassSubject, classId];
+
+      await update(userRef, {
+        subjects: updatedUserClass,
+      });
+
+      return { success: true, classId };
     }
 
     return { success: false, message: "Invalid invite code." };
