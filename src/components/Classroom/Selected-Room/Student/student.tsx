@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-// import InviteStudentDialog from './invite-student'
+import InviteStudentDialog from "./invite-student";
 import { Classroom } from "@/types/classroom";
 import StudentTableList from "./student-table";
 import { useAuthStore } from "@/store/authStore";
 import { AddStudentsDialog } from "./add-students";
-// import { AdminAddStudentsDialog } from './admin-add-students'
+// import { AdminAddStudentsDialog } from "./admin-add-students";
 import { Subject } from "@/types/subject";
 
 interface StudentTabProps {
@@ -31,6 +31,12 @@ export default function StudentTab({ subject, classroom }: StudentTabProps) {
         </div>
         <div className="mb-5 flex gap-5">
           {/* {user.documentId === classroom?.createdBy && (
+            <>
+              <InviteStudentDialog classroom={classroom} />
+            </>
+          )} */}
+
+          {/* {user.role === "professor" && (
             <>
               <InviteStudentDialog classroom={classroom} />
             </>

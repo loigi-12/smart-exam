@@ -15,6 +15,7 @@ import DepartmentPage from "./components/Department/department";
 import SubjectPage from "./components/Subject/subject";
 import SelectedClassroom from "./components/Classroom/Selected-Room/selected-classroom";
 import SelectedSubjectInRoom from "./components/Classroom/Selected-Room/Subject/Selected-Subject/selected-subject";
+import SelectedSubjectInRoomNew from "./components/Classroom/Selected-Room/Subject/Selected-Subject/selected-subject-new";
 import ProfilePage from "./components/Profile/profile";
 import BlockPage from "./components/Block/block";
 import UserSettingsPage from "./components/Settings/user-settings";
@@ -78,8 +79,9 @@ function AppContent() {
           <Route path="department" element={<DepartmentPage />} />
           <Route path="subject" element={<SubjectPage />} />
           <Route path="classroom" element={<ClassroomPage />} />
-          <Route path="classroom/:id" element={<SelectedClassroom />} />
+          {/* <Route path="classroom/:id" element={<SelectedClassroom />} /> */}
           <Route path="classroom/:id/:id" element={<SelectedSubjectInRoom />} />
+          <Route path="classroom/:id" element={<SelectedSubjectInRoomNew />} />
           <Route path="subject/:id/profile" element={<ProfilePage />} />
           <Route path="users" element={<UsersPage />} />
           <Route path="users/profile" element={<ProfilePage />} />
