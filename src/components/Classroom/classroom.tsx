@@ -13,9 +13,9 @@ import { database } from "@/lib/firebase";
 
 export default function ClassroomPage() {
   const { user } = useAuthStore();
-  const [classrooms, setClassrooms] = useState<any[]>([]);
-  const [userClassrooms, setUserClassrooms] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [, setClassrooms] = useState<any[]>([]);
+  const [, setUserClassrooms] = useState<string[]>([]);
+  const [, setSearchQuery] = useState<string>("");
   const [classSubjects, setClassSubjects] = useState<any[]>([]);
   const [studentSubjects, setStudentSubjects] = useState<any[]>([]);
 
