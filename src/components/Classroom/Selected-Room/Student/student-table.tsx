@@ -87,15 +87,6 @@ export default function StudentTableList({
 
   return (
     <div>
-      <div className="flex items-center my-2 gap-3">
-        <h3>Filter</h3>
-
-        <TableFilter
-          label="Block"
-          data={uniqueBlocks}
-          onSelectFilter={(block) => setSelectedBlock(block)}
-        />
-      </div>
       <Table className="text-center cursor-pointer border-collapse border">
         <TableHeader>
           <TableRow>
