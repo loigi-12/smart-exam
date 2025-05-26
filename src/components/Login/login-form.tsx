@@ -5,8 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { auth, database } from "@/lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { ref, get } from "firebase/database";
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { ref, get, set } from "firebase/database";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
@@ -18,39 +18,43 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const createUserIfNotExists = async (user: any, isGoogleSignIn: boolean = false) => {
+    const userRef = ref(database, `users/${user.uid}`);
+    const snapshot = await get(userRef);
+
+    if (snapshot.exists()) {
+      const userData = snapshot.val();
+      setUser({ ...userData, documentId: user.uid });
+      return userData;
+    } else {
+      const newUserData = {
+        email: user.email,
+        name: user.displayName || "New User",
+        role: isGoogleSignIn ? "student" : "", // set role only for Google users
+        createdAt: new Date().toISOString(),
+      };
+      await set(userRef, newUserData);
+      setUser({ ...newUserData, documentId: user.uid });
+      return newUserData;
+    }
+  };
+
+  const handleEmailPasswordSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      const usersRef = ref(database, "users");
-      const snapshot = await get(usersRef);
+      const userData = await createUserIfNotExists(user);
 
-      if (snapshot.exists()) {
-        const usersData = snapshot.val();
+      toast({
+        title: "Login Successful",
+        description: `Welcome back, ${userData.name}!`,
+      });
 
-        const documentId = Object.keys(usersData).find(
-          (key) => usersData[key].email === user.email
-        );
-
-        if (documentId) {
-          const userData = { ...usersData[documentId], documentId };
-
-          setUser(userData);
-
-          toast({
-            title: "Login Successful",
-            description: `Welcome back, ${userData.name}!`,
-          });
-
-          setEmail("");
-          setPassword("");
-          navigate("/main");
-        } else {
-          console.log("No user data found");
-        }
-      }
+      setEmail("");
+      setPassword("");
+      navigate("/main");
     } catch (error) {
       console.error(error);
       toast({
@@ -60,15 +64,38 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      const userData = await createUserIfNotExists(user, true); // true = isGoogleSignIn
+
+      toast({
+        title: "Login Successful",
+        description: `Welcome back, ${userData.name}!`,
+      });
+
+      navigate("/main");
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: "Google sign-in failed.",
+      });
+    }
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
+          <form className="p-6 md:p-8" onSubmit={handleEmailPasswordSignIn}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
-                <p className="text-balance text-muted-foreground">Login to your account</p>
+                <p className="text-muted-foreground">Login to your account</p>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -82,9 +109,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 />
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -95,6 +120,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               </div>
               <Button type="submit" className="w-full text-white">
                 Login
+              </Button>
+              <div className="flex items-center justify-center">
+                <span className="text-sm text-muted-foreground">or</span>
+              </div>
+              <Button type="button" variant="outline" onClick={handleGoogleSignIn}>
+                Sign in with Google
               </Button>
             </div>
           </form>
@@ -107,7 +138,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
           </div>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
+      <div className="text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
         By clicking continue, you agree to our <a href="#">Terms of Service</a> and{" "}
         <a href="#">Privacy Policy</a>.
       </div>
