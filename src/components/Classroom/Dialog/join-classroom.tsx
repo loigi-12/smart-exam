@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/authStore";
-import { StudentJoinClass, StudentJoinClassroom } from "@/services/classroom-services";
+import { StudentJoinClass } from "@/services/classroom-services";
 
 export default function JoinClassroom() {
   const { toast } = useToast();

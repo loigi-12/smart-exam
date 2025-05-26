@@ -77,17 +77,17 @@ export default function ClassroomPage() {
     }
   }, [user]);
 
-  const filteredClassrooms = classrooms.filter((room) => {
-    const matchesSearch = room.name.toLowerCase().includes(searchQuery.toLowerCase());
-    if (user?.role === "student") {
-      return matchesSearch && userClassrooms.includes(room.id);
-    } else if (user?.role === "professor") {
-      return matchesSearch && userClassrooms.includes(room.id);
-    } else if (user?.role === "admin") {
-      return matchesSearch;
-    }
-    return false;
-  });
+  // const filteredClassrooms = classrooms.filter((room) => {
+  //   const matchesSearch = room.name.toLowerCase().includes(searchQuery.toLowerCase());
+  //   if (user?.role === "student") {
+  //     return matchesSearch && userClassrooms.includes(room.id);
+  //   } else if (user?.role === "professor") {
+  //     return matchesSearch && userClassrooms.includes(room.id);
+  //   } else if (user?.role === "admin") {
+  //     return matchesSearch;
+  //   }
+  //   return false;
+  // });
 
   return (
     <div className="p-2">

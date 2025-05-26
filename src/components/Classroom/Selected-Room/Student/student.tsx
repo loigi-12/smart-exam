@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import InviteStudentDialog from "./invite-student";
+// import InviteStudentDialog from "./invite-student";
 import { Classroom } from "@/types/classroom";
 import StudentTableList from "./student-table";
 import { useAuthStore } from "@/store/authStore";

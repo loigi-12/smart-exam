@@ -1,4 +1,4 @@
-import { ref, set, push, get, onValue, update } from "firebase/database";
+import { ref, set, push, get, onValue } from "firebase/database";
 import { database } from "@/lib/firebase";
 
 export const createSubject = (

@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Classroom } from "@/types/classroom";
-import { Subject } from "@/types/subject";
+// import { Subject } from "@/types/subject";
 import ExamDialog from "./createExamDialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/authStore";
@@ -47,7 +47,7 @@ interface _Exam {
   instructions: string;
 }
 
-export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
+export default function DisplayExam({ subject }: DisplayExamProps) {
   const { user } = useAuthStore();
 
   const [loading, setLoading] = useState(true);

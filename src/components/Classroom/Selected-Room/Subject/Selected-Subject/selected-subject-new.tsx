@@ -18,7 +18,7 @@ export default function SelectedSubjectInRoomNew() {
 
   const { id } = useParams();
   const [subject, setSubject] = useState<Subject | null>(null);
-  const [classroom, setClassroom] = useState<Classroom | null>(null);
+  const [classroom] = useState<Classroom | null>(null);
   const [selectedTab, setSelectedTab] = useState("exam");
   const [createdByName, setCreatedByName] = useState<string | null>(null);
 
