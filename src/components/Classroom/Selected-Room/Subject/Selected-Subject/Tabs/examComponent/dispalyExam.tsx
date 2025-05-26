@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Classroom } from "@/types/classroom";
+import { Subject } from "@/types/subject";
 import ExamDialog from "./createExamDialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/authStore";
@@ -264,7 +265,7 @@ export default function DisplayExam({ subject, classroom }: DisplayExamProps) {
 
     setSelectedExam(examId);
 
-    if (user?.documentId === classroom.createdBy) {
+    if (user.role === "student") {
       setStartExam(true);
     } else {
       setDialogOpen(true);

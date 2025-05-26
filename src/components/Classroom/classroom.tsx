@@ -89,8 +89,6 @@ export default function ClassroomPage() {
     return false;
   });
 
-  console.log("user", user);
-
   return (
     <div className="p-2">
       <Card className="p-4">
