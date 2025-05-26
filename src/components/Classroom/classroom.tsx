@@ -99,7 +99,7 @@ export default function ClassroomPage() {
             <h1 className="font-bold">Class</h1>
           </div>
           <div className="flex flex-col sm:flex-row w-full gap-2 items-center">
-            {filteredClassrooms.length === 0 ? (
+            {/* {filteredClassrooms.length === 0 ? (
               <p>No Department found.</p>
             ) : (
               filteredClassrooms.map((room) => (
@@ -117,7 +117,7 @@ export default function ClassroomPage() {
                   </Card>
                 </Link>
               ))
-            )}
+            )} */}
 
             {classSubjects &&
               classSubjects.map((subject) => (
